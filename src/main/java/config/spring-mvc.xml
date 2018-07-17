@@ -8,12 +8,16 @@
 	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd"
 	default-lazy-init="true">
 	
-	<!-- <mvc:annotation-driven/> --><!-- 不要也可以 -->
+
+	<mvc:annotation-driven/><!-- 不要也可以   不过加了貌似可以解决@ResponseBody乱码??? -->
+	
 	<!-- scan the package and the sub package -->
-    <context:component-scan base-package="com.cms.controller.**"/>  <!-- *包   、 **类或者子包 -->
+    <context:component-scan base-package="com.cms.controller">  <!-- *包   、 **类或者子包 -->
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
 	
 	<!-- configure the InternalResourceViewResolver --><!-- 视图 -->
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" id="internalResourceViewResolver">
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/html/" />
         <property name="suffix" value=".jsp" />
     </bean>

@@ -64,9 +64,18 @@
 	<jackson-core.version>2.7.4</jackson-core.version>
 	<jackson-databind.version>2.7.4</jackson-databind.version>
 	<jackson-annotations.version>2.7.4</jackson-annotations.version>
+	<net-sf-json.version>2.4</net-sf-json.version>
   </properties>
   
   <dependencies>
+	<!-- https://mvnrepository.com/artifact/net.sf.json-lib/json-lib -->
+	<dependency>
+	    <groupId>net.sf.json-lib</groupId>
+	    <artifactId>json-lib</artifactId>
+	    <version>${net-sf-json.version}</version>
+	    <classifier>jdk15</classifier>
+	</dependency>
+	  
   	<dependency>
 	    <groupId>org.springframework</groupId>
 	    <artifactId>spring-aop</artifactId>
