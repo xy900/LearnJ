@@ -12,6 +12,9 @@
 	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd"
 default-lazy-init="true">
 
+	<!-- 引用properties文件 -->
+	<context:property-placeholder location="classpath:config/properties/*.properties"/>
+	
 	<!-- scan the package and the sub package -->
     <context:component-scan base-package="com.cms">  <!-- 加载除表现层之外的所有bean -->
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
@@ -20,7 +23,7 @@ default-lazy-init="true">
 	<!-- test 注入 -->
 	<bean id="point" class="com.cms.component.TestPoint">
 		<property name="id" value="111"/>
-		<property name="name" value="haha"/>
+		<property name="name" value="${jdbc.username}"/>
 	</bean>
 	
 	<!-- test AOP xml配置 -->
@@ -31,12 +34,43 @@ default-lazy-init="true">
 	    <aop:aspect ref="TestAop"><!-- <aop:aspect>定义切面,可以定义多个  -->
 	    	<aop:pointcut id="pointCut1" expression="execution(* com.cms.component..*.*(..))"/><!--切入点  该包及子包下的任何方法执行 --> 
 	        <aop:before pointcut-ref="pointCut1" method="before"/><!-- 引用切入点 -->  
-	        <aop:after pointcut="execution(* com.cms.component..*.*(..))" method="after"/><!-- 直接使用pointcut属性 -->
+	        <aop:after pointcut="execution(* com.cms.component..*.*(..))" method="after"/><!-- 直接使用pointcut属性  (匿名切入点)-->
 	        <!-- 通知采用pointcut-ref和 pointcut均可,   <aop:pointcut>(切入点)也可以不定义 -->
 	    </aop:aspect>  
 	</aop:config>  
 	
-	
+	<!-- druid 数据库连接池 -->  
+  	<bean id = "dataSource" class = "com.alibaba.druid.pool.DruidDataSource" destroy-method = "close" >    
+        <!-- 数据库基本信息配置 -->  
+        <property name = "url" value = "${jdbc.url}" />    
+        <property name = "username" value = "${jdbc.username}" />    
+        <property name = "password" value = "${jdbc.password}" />    
+        <property name = "driverClassName" value = "${jdbc.driverClassName}" />    
+        <property name = "filters" value = "${jdbc.filters}" />    
+        <!-- 最大并发连接数 -->  
+        <property name = "maxActive" value = "${jdbc.maxActive}" />  
+        <!-- 初始化连接数量 -->  
+        <property name = "initialSize" value = "${jdbc.initialSize}" />  
+        <!-- 配置获取连接等待超时的时间 -->  
+        <property name = "maxWait" value = "${jdbc.maxWait}" />  
+        <!-- 最小空闲连接数 -->  
+        <property name = "minIdle" value = "${jdbc.minIdle}" />    
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->  
+        <property name = "timeBetweenEvictionRunsMillis" value ="${jdbc.timeBetweenEvictionRunsMillis}" />  
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->  
+        <property name = "minEvictableIdleTimeMillis" value ="${jdbc.minEvictableIdleTimeMillis}" />    
+        <property name = "validationQuery" value = "${jdbc.validationQuery}" />    
+        <property name = "testWhileIdle" value = "${jdbc.testWhileIdle}" />    
+        <property name = "testOnBorrow" value = "${jdbc.testOnBorrow}" />    
+        <property name = "testOnReturn" value = "${jdbc.testOnReturn}" />    
+        <property name = "maxOpenPreparedStatements" value ="${jdbc.maxOpenPreparedStatements}" />  
+        <!-- 打开 removeAbandoned 功能 -->  
+        <property name = "removeAbandoned" value = "${jdbc.removeAbandoned}" />  
+        <!-- 1800 秒，也就是 30 分钟 -->  
+        <property name = "removeAbandonedTimeout" value ="${jdbc.removeAbandonedTimeout}" />  
+        <!-- 关闭 abanded 连接时输出错误日志 -->     
+        <property name = "logAbandoned" value = "${jdbc.logAbandoned}" />  
+    </bean>  
 	
 	
 	

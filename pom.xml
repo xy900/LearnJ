@@ -75,7 +75,13 @@
 	    <version>${net-sf-json.version}</version>
 	    <classifier>jdk15</classifier>
 	</dependency>
-	  
+	<!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+	<dependency>
+	    <groupId>com.alibaba</groupId>
+	    <artifactId>druid</artifactId>
+	    <version>${druid.version}</version>
+	</dependency>
+	
   	<dependency>
 	    <groupId>org.springframework</groupId>
 	    <artifactId>spring-aop</artifactId>

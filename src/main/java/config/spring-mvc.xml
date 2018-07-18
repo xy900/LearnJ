@@ -8,7 +8,7 @@
 	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd"
 	default-lazy-init="true">
 	
-
+	<!-- 启动MVC注解驱动  -->
 	<mvc:annotation-driven/><!-- 不要也可以   不过加了貌似可以解决@ResponseBody乱码??? -->
 	
 	<!-- scan the package and the sub package -->
