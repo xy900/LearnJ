@@ -59,7 +59,7 @@ public class Test {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/driud.do", produces = "application/json;charset=utf-8")
+	@RequestMapping(value="/druid.do", produces = "application/json;charset=utf-8")
 	public String druid(HttpServletRequest request, HttpServletResponse response, Model model) {
 		System.out.println(request.getRequestURI());
 		TestEntity entity = testService.get("test", 1);
