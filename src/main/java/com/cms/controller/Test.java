@@ -64,6 +64,13 @@ public class Test {
 		System.out.println(request.getRequestURI());
 		TestEntity entity = testService.get("test", 1);
 		System.out.println(entity);
+		TestEntity test = new TestEntity();
+		test.setId(1);
+		test.setName("test");
+		TestEntity entity2 = testService.get("test", test);
+		System.out.println(entity2);
+		
+		testService.update("update", 1);
 		return "";
 	}
 }

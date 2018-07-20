@@ -90,6 +90,31 @@ default-lazy-init="true">
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource" />
     </bean>
+    
+    <!-- tx标签配置事务, 不用@Transactional注解 -->
+    <!-- 启用事务 需要处理 rollback -->
+	<!-- <tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="handle*" propagation="REQUIRED" />
+			<tx:method name="cancel*" propagation="REQUIRED" />
+		</tx:attributes>
+	</tx:advice>
+	<aop:config>
+		<aop:pointcut id="serviceOperation" expression="execution(* com.cms.ser1vice..*.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
+	</aop:config> -->
+	<!-- end tx配置事务 -->
+	
+	<!-- 注解配置事务 需要在service实现类中加@Transactional注解 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<!-- end 注解配置事务-->
+	
+	
+	
 	
 	
 </beans>

@@ -4,5 +4,9 @@
 <mapper namespace="config.mapper">
     <select id="test" resultType="com.cms.entity.TestEntity" parameterType="Integer">
         select * from test where id =#{id}
-    </select>   
+    </select>
+    
+    <update id="update" parameterType="Integer">
+    	update test set name='succes121' where id=#{id}
+    </update>
 </mapper>
