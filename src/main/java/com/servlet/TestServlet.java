@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cms.utils.ApplicationContextHelper;
+
 /**
  * Servlet implementation class TestServlet
  */
@@ -28,6 +30,13 @@ public class TestServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
+		System.out.println(getServletContext());
+		System.out.println(getServletConfig().getServletContext());
+		System.out.println(request.getServletContext());
+		System.out.println(request.getSession().getServletContext());
+		System.out.println("==========================1");
+		System.out.println(ApplicationContextHelper.applicationContext);
+		
 	}
 
 	/**
