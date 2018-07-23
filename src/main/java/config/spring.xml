@@ -116,5 +116,5 @@ default-lazy-init="true">
 	
 	<context:annotation-config/>
 	
-	<bean id="applicationContextHelper" class="com.cms.utils.ApplicationContextHelper" lazy-init="false"></bean>
+	<!-- <bean id="applicationContextHelper" class="com.cms.utils.ApplicationContextHelper" lazy-init="false"></bean> 已经使用了@Lazy注解解决了此类无法实例化的问题-->
 </beans>
