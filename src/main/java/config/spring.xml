@@ -114,8 +114,7 @@ default-lazy-init="true">
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	<!-- end 注解配置事务-->
 	
-	
 	<context:annotation-config/>
 	
-	
+	<bean id="applicationContextHelper" class="com.cms.utils.ApplicationContextHelper" lazy-init="false"></bean>
 </beans>

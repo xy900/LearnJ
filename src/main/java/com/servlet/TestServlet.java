@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.cms.component.TestPoint;
 import com.cms.utils.ApplicationContextHelper;
 
 /**
@@ -35,8 +38,10 @@ public class TestServlet extends HttpServlet {
 		System.out.println(request.getServletContext());
 		System.out.println(request.getSession().getServletContext());
 		System.out.println("==========================1");
-		System.out.println(ApplicationContextHelper.applicationContext);
-		
+		System.out.println(ApplicationContextHelper.applicationContext);//通过实现ApplicationContextAware接口来获取applicationContext
+		System.out.println(WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext()));//通过WebApplicationContextUtils与servletContext获取
+		TestPoint point = (TestPoint) ApplicationContextHelper.applicationContext.getBean("point");
+		System.out.println(point);
 	}
 
 	/**

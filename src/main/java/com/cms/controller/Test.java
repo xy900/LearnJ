@@ -1,9 +1,15 @@
 package com.cms.controller;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cms.component.TestPoint;
 import com.cms.entity.TestEntity;
 import com.cms.service.TestService;
+import com.cms.utils.ApplicationContextHelper;
 
 import net.sf.json.JSONObject;
 
@@ -70,7 +77,51 @@ public class Test {
 		TestEntity entity2 = testService.get("test", test);
 		System.out.println(entity2);
 		
-		testService.update("update", 1);
+		testService.update("update", 1);//测试事务回滚是否生效
 		return "";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "resource.do", produces = "application/json;charset=utf-8")
+	public String resource(HttpServletRequest request, HttpServletResponse response, Model model) {
+		Resource resource = ApplicationContextHelper.applicationContext.getResource("classpath:config/properties/jdbc.properties");
+		try {
+			InputStream in = resource.getInputStream();
+			StringBuilder sb = new StringBuilder();
+			int n = 0;
+			while ( (n=in.read())!= -1 ) {
+				sb.append((char)n);
+			}
+			System.out.println(sb.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		Resource resource1 = ApplicationContextHelper.applicationContext.getResource("/WEB-INF/classes/config/spring.xml");
+		System.out.println("\n是否存在文件：" + resource1.exists());
+		try {
+			InputStream in = resource1.getInputStream();
+			InputStreamReader inputStreamReader = new InputStreamReader(in, "UTF-8");
+			BufferedReader reader = new BufferedReader(inputStreamReader);
+			StringBuilder sb = new StringBuilder();
+			char[] cbuf = new char[1000];
+			/*while ( reader.read(cbuf, 0, 1000) != -1 ) {
+				sb.append(cbuf);
+			}*/
+			while ( reader.read(cbuf) != -1 ) {
+				sb.append(cbuf);
+			}
+			//sb.append(cbuf);
+			/*String string = "";
+			while ( (string=reader.readLine()) != null ) {
+				sb.append(string);
+			}*/
+			System.out.println(sb.toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return "success";
 	}
 }

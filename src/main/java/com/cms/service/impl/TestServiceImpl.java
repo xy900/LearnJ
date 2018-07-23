@@ -29,7 +29,7 @@ public class TestServiceImpl implements TestService{
 	public int update(String state, Object obj) {
 		int count =  testdao.updateById(state, obj);
 		String x = null;
-		System.out.println(x.equals("test"));
+		System.out.println(x.equals("test"));//测试事务回滚是否生效
 		return count;
 	}
 
