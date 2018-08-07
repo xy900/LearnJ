@@ -26,6 +26,11 @@ default-lazy-init="true">
 		<property name="name" value="${jdbc.username}"/>
 	</bean>
 	
+	<!-- test spring加载时就初始化  -->
+	<bean id="pointSpring" class="com.cms.component.TestPoint" lazy-init="false">
+		<property name="id" value="222"/>
+		<property name="name" value="222name"/>
+	</bean>
 	
 	<!-- 开启aspectj代理   ( Spring默认不支持@AspectJ风格的切面声明,需要开启)-->
     <aop:aspectj-autoproxy />
