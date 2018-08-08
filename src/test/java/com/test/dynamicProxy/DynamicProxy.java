@@ -9,10 +9,10 @@ import java.lang.reflect.Proxy;
  */
 public class DynamicProxy implements InvocationHandler{
 	
-	private IBook book;
+	private Object subject;//接受任意类型的对象
 	
-	public DynamicProxy(IBook book) {
-		this.book = book;
+	public DynamicProxy(Object subject) {
+		this.subject = subject;
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class DynamicProxy implements InvocationHandler{
 			System.out.print(o + "; ");
 		}
 		System.out.println();
-		method.invoke(book, args);//代理对象调用真实对象的方法
+		method.invoke(subject, args);//代理对象调用真实对象的方法
 		
 		System.out.println("end!");
 		return null;
