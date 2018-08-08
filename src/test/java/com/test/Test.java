@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Date;
 
 import com.entity.TestEntityClass;
@@ -28,18 +29,18 @@ class Test {
 		Class<?> clazz = TestEntityClass.class;
 		System.out.println(clazz.getName());
 		Field[] field = clazz.getDeclaredFields();
-		System.out.println("--------------Filed-----------------------");
+		System.out.println("--------------Filed--------------Modifiers(修饰符)---------");
 		for (Field ele : field) {
-			System.out.println(ele.getName() + ", ");
+			System.out.println(ele.getName() + ": " + ele.getModifiers());
 		}
 		System.out.println("--------------Constructor-----------------------");
 		for (Constructor<?> ele : clazz.getDeclaredConstructors()) {
 			System.out.println(ele);
 		}
-		System.out.println("--------------Method----------------------");
+		System.out.println("--------------Method----------------Modifiers(修饰符)------");
 		Method[] method = clazz.getDeclaredMethods();
 		for (Method ele : method) {
-			System.out.println(ele.getName() + ", ");
+			System.out.println(ele.getName() + ": " + ele.getModifiers());
 		}
 		try {
 			Constructor<?> constructor = clazz.getDeclaredConstructor(String.class, String.class, Integer.class, Date.class);
