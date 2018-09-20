@@ -20,8 +20,10 @@ public class DynamicProxy implements InvocationHandler{
 		System.out.println("begin!");
 		System.out.println("method: " + method.getName());
 		System.out.print("args: ");
-		for (Object o : args) {
-			System.out.print(o + "; ");
+		if (args != null) {
+			for (Object o : args) {
+				System.out.print(o + "; ");
+			}	
 		}
 		System.out.println();
 		method.invoke(subject, args);//代理对象调用真实对象的方法
@@ -35,5 +37,12 @@ public class DynamicProxy implements InvocationHandler{
 		DynamicProxy dynamic = new DynamicProxy(book);
 		IBook proxy = (IBook) Proxy.newProxyInstance(IBook.class.getClassLoader(), new Class<?>[]{IBook.class}, dynamic);
 		proxy.readBook("Think In JAVA");
+		
+		System.out.println("-----------------");
+		
+		Pet pet = new Dog();//委托类
+		DynamicProxy dyProxyPet = new DynamicProxy(pet);//动态代理类
+		Pet petProxy = (Pet) Proxy.newProxyInstance(Pet.class.getClassLoader(), new Class<?>[]{Pet.class}, dyProxyPet);
+		petProxy.say();
 	}
 }

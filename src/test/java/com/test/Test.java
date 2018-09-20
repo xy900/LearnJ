@@ -4,15 +4,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Date;
-
 import com.entity.TestEntityClass;
 
-class Test {
+public class Test {
 
-	@org.junit.jupiter.api.Test
-	void test() {
+	@org.junit.Test
+	public void test() {
 		String FS = System.getProperty("file.separator");//  \
 		System.out.println(FS);
 		String work_dir = System.getProperty("user.dir");
@@ -22,8 +20,8 @@ class Test {
 		System.out.println(TestEntityClass.class.getName());
 	}
 	
-	@org.junit.jupiter.api.Test
-	void test1() {
+	@org.junit.Test
+	public void test1() {
 		System.out.println("\n===============test1==================反射");
 		//Class<?> clazz = new TestEntityClass("2", "hehe", 8054, new Date()).getClass();
 		Class<?> clazz = TestEntityClass.class;
