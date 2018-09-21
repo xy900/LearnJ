@@ -8,13 +8,14 @@ import java.io.InputStreamReader;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.cms.component.TestPoint;
 import com.cms.entity.TestEntity;
 import com.cms.service.TestService;
@@ -25,6 +26,8 @@ import net.sf.json.JSONObject;
 @Controller
 @RequestMapping("/test")
 public class Test {
+	
+	private static Logger logger = LoggerFactory.getLogger(Test.class);
 	
 	@Autowired
 	private TestPoint point;
@@ -37,6 +40,8 @@ public class Test {
 	
 	@RequestMapping("/1.do")
 	public String test1(HttpServletRequest request, HttpServletResponse response, Model model) {
+		logger.debug("1.do 哈哈");
+		logger.info("11.do 蛤蛤");
 		model.addAttribute("title", "1.jtp");
 		return "1";
 	}
@@ -51,6 +56,12 @@ public class Test {
 		jsonObject.put("name", "李三");
 		jsonObject.put("age", 25);
 		System.out.println(point.toString());
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return jsonObject.toString();
 	}
 	

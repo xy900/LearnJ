@@ -38,6 +38,8 @@
 	<httpcore.version>4.4.8</httpcore.version>
 	
 	<slf4j.version>1.7.25</slf4j.version>
+	<slf4j-log4j.version>1.7.2</slf4j-log4j.version>
+	<logback-ext-spring.version>0.1.4</logback-ext-spring.version>
 	<javassist.version>3.22.0-GA</javassist.version>
 	<freemarker.version>2.3.25-incubating</freemarker.version>
 	<hibernate-commons-annotations.version>4.0.5.Final</hibernate-commons-annotations.version>
@@ -109,9 +111,37 @@
     	<scope>test</scope>
 	</dependency>
 	
+	<!-- slf4j -->
+	<dependency>
+	    <groupId>org.slf4j</groupId>
+	    <artifactId>jcl-over-slf4j</artifactId>
+	    <version>${slf4j.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+	<dependency>
+	    <groupId>org.slf4j</groupId>
+	    <artifactId>slf4j-api</artifactId>
+	    <version>${slf4j.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-log4j12</artifactId>
+		<version>${slf4j-log4j.version}</version>
+	</dependency>
 	
-	
-	
+	<!-- logback -->
+	<dependency>
+    	<groupId>ch.qos.logback</groupId>
+    	<artifactId>logback-classic</artifactId>
+    	<version>${logback.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.logback-extensions/logback-ext-spring -->
+	<dependency>
+	    <groupId>org.logback-extensions</groupId>
+	    <artifactId>logback-ext-spring</artifactId>
+	    <version>${logback-ext-spring.version}</version>
+	</dependency>
+
   	<dependency>
 	    <groupId>org.springframework</groupId>
 	    <artifactId>spring-aop</artifactId>

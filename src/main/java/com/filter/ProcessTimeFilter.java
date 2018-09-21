@@ -10,7 +10,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ProcessTimeFilter implements Filter{
+	
+	private static Logger Logger = LoggerFactory.getLogger(ProcessTimeFilter.class);
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -22,11 +27,13 @@ public class ProcessTimeFilter implements Filter{
 			throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		long beginTime = System.currentTimeMillis();
-		System.out.println(getClass() + " request url:" + req.getRequestURI() + ", begin at:" + beginTime);
+//		System.out.println(getClass() + " request url:" + req.getRequestURI() + ", begin at:" + beginTime);
+		Logger.info("request url:{}, begin at:{}", req.getRequestURL(), beginTime);
 		chain.doFilter(request, response);
 		long endTime = System.currentTimeMillis();
-		System.out.println(getClass() + " request url:" + req.getRequestURI() + ", end at:" 
-								+ endTime + ", spend " + (endTime - beginTime) + " ms");
+//		System.out.println(getClass() + " request url:" + req.getRequestURI() + ", end at:" 
+//								+ endTime + ", spend " + (endTime - beginTime) + " ms");
+		Logger.info("request uri:{}, end at:{}, spend {}ms", req.getRequestURI(), beginTime, endTime - beginTime);
 		//response.setCharacterEncoding("UTF-8");
 		//response.setContentType("application/json;charset=UTF-8");
 	}
