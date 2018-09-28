@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 import java.util.Date;
 import com.entity.TestEntityClass;
 
+import net.sf.json.JSONObject;
+
 public class Test {
 
 	@org.junit.Test
@@ -100,6 +102,24 @@ public class Test {
 		}
 	}
 	
-	
-	
+	@org.junit.Test
+	public void test2() {
+		TestEntityClass test = new TestEntityClass("1", "test", 909974, new Date());
+		Class<?> clazz = test.getClass();
+		JSONObject jsonObject = new JSONObject();//对象通过反射转换为JSONObject
+		Field[] fields = clazz.getDeclaredFields();
+		for (Field field : fields) {//遍历成员变量遍历
+			try {
+				field.setAccessible(true);//设置访问权限,不然无法获取private类型的成员变量
+				jsonObject.put(field.getName(), field.get(test));//通过反射 获取对象的所有属性值
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
+		//JSONObject转换为 指定对象
+		TestEntityClass test1 = (TestEntityClass) JSONObject.toBean(jsonObject, TestEntityClass.class);
+		System.out.println(test1);
+	}
 }
