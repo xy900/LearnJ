@@ -3,7 +3,8 @@ package com.test.dynamicProxy;
 public class Dog implements Pet{
 
 	@Override
-	public void say() {
+	public String say(String what) {
 		System.out.println("wang wang wang!");
+		return what;
 	}
 }
