@@ -5,7 +5,7 @@ import org.springframework.beans.factory.FactoryBean;
 import com.entity.TestEntityClass;
 
 /**
- * FactoryBean, 用于实例化TestEntityClass对象
+ * FactoryBean, 用于实例化指定的对象
  * @author xieyu
  *
  */
@@ -16,7 +16,7 @@ public class TestEntityClassFactoryBean implements FactoryBean<TestEntityClass>{
 	private Date currTime;
 	
 	@Override
-	public TestEntityClass getObject() throws Exception {
+	public TestEntityClass getObject() throws Exception {//返回实例
 		return new TestEntityClass(id, name, no, currTime);
 	}
 
