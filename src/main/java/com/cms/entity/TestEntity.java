@@ -1,6 +1,10 @@
 package com.cms.entity;
 
-public class TestEntity {
+import java.io.Serializable;
+
+public class TestEntity implements Serializable{
+	private static final long serialVersionUID = 8150240700018118346L;
+	
 	private Integer id;
 	private String name;
 	
