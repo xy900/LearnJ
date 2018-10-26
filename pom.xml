@@ -32,7 +32,7 @@
 	<commons-net.version>2.2</commons-net.version>
 	<dom4j.version>1.6.1</dom4j.version>
 	<druid.version>1.1.5</druid.version>
-	<ehcache-core.version>2.6.11</ehcache-core.version>
+	<ehcache-core.version>2.10.4</ehcache-core.version>
 	<ezmorph.version>1.0.6</ezmorph.version>
 	<httpclient.version>4.5.3</httpclient.version>
 	<httpcore.version>4.4.8</httpcore.version>
@@ -57,7 +57,7 @@
 	<jta.verson>1.1</jta.verson>
 	<openoffice.version>3.2.1</openoffice.version>
 	<logback.version>1.2.3</logback.version>
-	<spring.version>4.3.16.RELEASE</spring.version>
+	<spring.version>4.3.18.RELEASE</spring.version>
 	<wsdl4j.version>1.5.3</wsdl4j.version>
 	<zxing.version>2.3.0</zxing.version>
 	<bouncycastle.version>1.45</bouncycastle.version>
@@ -70,6 +70,8 @@
 	<mybatis.version>3.4.1</mybatis.version>
 	<mybatis-spring.version>1.3.0</mybatis-spring.version>
 	<junit.version>4.12</junit.version>
+	<redis.version>2.7.2</redis.version>
+	<ehcache-mybatis.version>1.1.0</ehcache-mybatis.version>
   </properties>
   
   <dependencies>
@@ -142,6 +144,34 @@
 	    <artifactId>logback-ext-spring</artifactId>
 	    <version>${logback-ext-spring.version}</version>
 	</dependency>
+	
+	<!-- redis -->
+	<dependency>
+		<groupId>redis.clients</groupId>
+		<artifactId>jedis</artifactId>
+		<version>${redis.version}</version>
+	</dependency>
+	<!-- ehcache-mybatis整合 -->
+	<dependency>
+	  <groupId>org.mybatis.caches</groupId>
+	  <artifactId>mybatis-ehcache</artifactId>
+	  <version>${ehcache-mybatis.version}</version>
+	</dependency>
+	<!-- ehcache -->
+	<!-- https://mvnrepository.com/artifact/net.sf.ehcache/ehcache -->
+	<dependency>
+	    <groupId>net.sf.ehcache</groupId>
+	    <artifactId>ehcache</artifactId>
+	    <version>${ehcache-core.version}</version>
+	</dependency>
+	<!-- spring单元测试 -->
+	<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+    </dependency>
+	
 
   	<dependency>
 	    <groupId>org.springframework</groupId>
