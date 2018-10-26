@@ -4,10 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,9 @@ import com.cms.component.TestPoint;
 import com.cms.entity.TestEntity;
 import com.cms.service.TestService;
 import com.cms.utils.ApplicationContextHelper;
-
+import com.cms.utils.JedisUtils;
 import net.sf.json.JSONObject;
+import redis.clients.jedis.Jedis;
 
 @Controller
 @RequestMapping("/test")
@@ -76,6 +76,9 @@ public class Test {
 		return jsonObject.toString();
 	}
 	
+	/**
+	 * 测试回滚
+	 */
 	@ResponseBody
 	@RequestMapping(value="/druid.do", produces = "application/json;charset=utf-8")
 	public String druid(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -134,5 +137,29 @@ public class Test {
 		
 		
 		return "success";
+	}
+	
+	/**
+	 * 测试redis
+	 */
+	@ResponseBody
+	@RequestMapping(value="/redis.do", produces = "application/json;charset=utf-8")
+	public String redis(HttpServletRequest request, String id, HttpServletResponse response, Model model) {
+		JSONObject jsonObject = new JSONObject();
+		String value = null;
+		//获取redis缓存
+		value = JedisUtils.getString(TestEntity.class.getSimpleName() + "_" + id);
+		if (StringUtils.isBlank(value)) {//缓存不存在,查库
+			logger.info("Get redis failed");
+			TestEntity entity = testService.get("test", Integer.valueOf(id));
+			jsonObject = JSONObject.fromObject(entity);
+			value = jsonObject.toString();
+			JedisUtils.setString(TestEntity.class.getSimpleName() + "_" + id, value);
+			logger.info("Set redis [{}, {}]", TestEntity.class.getSimpleName() + "_" + id, value);
+		} else {
+			logger.info("Get redis success");
+		}
+	
+		return value;
 	}
 }

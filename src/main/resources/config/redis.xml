@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"  
+    xmlns:context="http://www.springframework.org/schema/context"  
+    xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"  
+    xmlns:aop="http://www.springframework.org/schema/aop"  
+    xsi:schemaLocation="  
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">  
+
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal"  value="${redis.maxTotal}" /> 
+        <property name="maxIdle" value="${redis.maxIdle}" /> 
+        <property name="timeBetweenEvictionRunsMillis" value="${redis.timeBetweenEvictionRunsMillis}" />
+        <property name="minEvictableIdleTimeMillis" value="${redis.minEvictableIdleTimeMillis}" />
+        <property name="testOnBorrow" value="${redis.testOnBorrow}" />
+    </bean>
+
+    <bean id="jedisShardInfo" class="redis.clients.jedis.JedisShardInfo">  
+        <constructor-arg index="0" value="${redis.host}" />  
+        <constructor-arg index="1" value="${redis.port}" type="int"/>  
+    </bean>  
+    
+     <bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool"  scope="singleton">  
+        <constructor-arg index="0" ref="jedisPoolConfig" />  
+        <constructor-arg index="1">  
+            <list>  
+                <ref bean="jedisShardInfo" />  
+            </list>  
+        </constructor-arg>  
+    </bean>    
+
+    <bean id="jedisPool" class="redis.clients.jedis.JedisPool"  scope="singleton">  
+        <constructor-arg index="0" value="${redis.host}" />  
+        <constructor-arg index="1" value="${redis.port}" type="int"/> 
+    </bean>    
+    
+
+</beans>
