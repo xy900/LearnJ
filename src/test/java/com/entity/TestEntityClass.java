@@ -2,8 +2,6 @@ package com.entity;
 
 import java.util.Date;
 
-import com.alibaba.druid.stat.TableStat.Name;
-
 public class TestEntityClass {
 	private String id;
 	private String name;
