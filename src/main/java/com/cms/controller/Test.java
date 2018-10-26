@@ -14,6 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.cms.component.TestPoint;
 import com.cms.entity.TestEntity;
@@ -161,5 +162,17 @@ public class Test {
 		}
 	
 		return value;
+	}
+	
+	/**
+	 * 测试ehcache
+	 */
+	@ResponseBody
+	@RequestMapping(value="/ehcache.do", produces = "application/json;charset=utf-8")
+	public String ehcacheTest(HttpServletRequest request, @RequestParam(defaultValue="1")String id, HttpServletResponse response, Model model) {
+		JSONObject jsonObject = new JSONObject();
+		TestEntity entity = testService.get("test", Integer.valueOf(id));
+		jsonObject = JSONObject.fromObject(entity);
+		return jsonObject.toString();
 	}
 }

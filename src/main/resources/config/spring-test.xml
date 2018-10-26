@@ -12,9 +12,9 @@
 	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd"
 default-lazy-init="true">
 	
-	<!-- 由FactoryBean实例化对象 -->
-	<bean id="testFactoryBean" class="com.test.spring.factoryBean.TestEntityClassFactoryBean">
-	</bean>
+	<!-- 由FactoryBean实例化对象    通过spring单元测试时再放开注释-->
+	<!-- <bean id="testFactoryBean" class="com.test.spring.factoryBean.TestEntityClassFactoryBean">
+	</bean> -->
 	
 	
 	

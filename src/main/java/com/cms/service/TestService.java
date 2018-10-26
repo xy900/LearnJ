@@ -9,4 +9,8 @@ public interface TestService {
 	TestEntity get(String state, TestEntity entity);
 	
 	int update(String state, Object obj);
+	
+	TestEntity getByCache(Integer key);
+	
+	int updateByCache(Object obj);
 }

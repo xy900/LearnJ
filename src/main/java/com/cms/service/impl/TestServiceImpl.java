@@ -1,6 +1,8 @@
 package com.cms.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,26 @@ public class TestServiceImpl implements TestService{
 		int count =  testdao.updateById(state, obj);
 		String x = null;
 		System.out.println(x.equals("test"));//测试事务回滚是否生效
+		return count;
+	}
+	
+	/**
+	 * @Cacheable value:cache名, key:属性名, condition:过滤缓存结果
+	 */
+	@Override
+	@Cacheable(value = "myTest", key="#key")
+	public TestEntity getByCache(Integer key) {
+		System.out.println(">>>begin getByCache");
+		return testdao.get("test", key);
+	}
+	
+	/**
+	 * 清除指定的缓存
+	 */
+	@Override
+	@CacheEvict(value = "myTest")
+	public int updateByCache(Object obj) {
+		int count =  testdao.updateById("update", obj);
 		return count;
 	}
 

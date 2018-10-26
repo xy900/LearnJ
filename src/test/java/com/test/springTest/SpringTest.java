@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 
 import com.cms.service.TestService;
 import com.entity.TestEntityClass;
@@ -56,17 +57,64 @@ public class SpringTest extends SpringTestBase{
 	@Test
 	public void test2() {
 		System.out.println("========test2========");
-		CacheManager cacheManager = getBean("cacheManager");//获取ehcache的缓存管理器
-		Cache cache = cacheManager.getCache("TestEntity");
+		CacheManager cacheManagerFactory = getBean("cacheManagerFactory");//获取CacheManager 
+		CacheManager singletonCacheManager = CacheManager.create();  //获取单例CacheManager, 因为已经存在同名的CacheManager(上面)
+		EhCacheCacheManager springCacheManager = getBean("cacheManager");//将CacheManager交给spring管理
+		if (cacheManagerFactory == singletonCacheManager) {
+			System.out.println(">>>同一实例");
+		}
+		if (springCacheManager.getCacheManager() == singletonCacheManager) {
+			System.out.println(">>>spring中的CacheManager与单例模式的相等");
+		}
+		Cache cache = singletonCacheManager.getCache("TestEntity");//不是有spring管理的CacheManager
+		showCache(cache);
+		
+		System.out.println("-------spring管理的EhcacheManager-----------");
+		System.out.println(test.getByCache(1));
+		System.out.println(test.getByCache(1));
+		
+		System.out.println(test.getByCache(2));
+		System.out.println(test.getByCache(2));
+		
+		System.out.println(">>>update");
+		System.out.println(test.updateByCache(1));
+		System.out.println(test.getByCache(1));
+		
+		System.out.println(">>>myTest");
+		cache = singletonCacheManager.getCache("myTest");//不是有spring管理的CacheManager
+		showCache(cache);
+		
+		try {
+			Thread.sleep(35 * 1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println(">>>myTest after 35s");//30s之后
+		cache = singletonCacheManager.getCache("myTest");
+		showCache(cache);
+		
+		try {
+			Thread.sleep(35 * 1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println(">>>myTest after 70s");//70s之后从内存中移除
+		cache = singletonCacheManager.getCache("myTest");
+		showCache(cache);
+	}
+	
+	public void showCache(Cache cache) {
 		if (cache == null) {
-			System.out.println("Not exist cache");
+			System.out.println(">>>Not exist cache");
 		} else {
-			System.out.println("Cache is :" + cache);
+			System.out.println(">>>Cache is :" + cache);
+			System.out.println(">>>MemorySize is :" + cache.getMemoryStoreSize());
 			List<?> list = cache.getKeys();
 			if (list != null) {
-				System.out.println("Cache size is " + list.size());
+				System.out.println(">>>Cache size is " + list.size());
 				for (Object ele : list) {
-					System.out.print(ele + ", ");
+					System.out.println(ele + ", " + cache.get(ele));
 				}
 				System.out.println();
 			}

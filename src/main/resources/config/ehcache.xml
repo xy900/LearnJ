@@ -35,13 +35,15 @@
 				  memoryStoreEvictionPolicy="LRU"
 	/>
 
-	<!-- <cache name="myTest"
-		   maxElementsInMemory="10" 
+	<cache name="myTest"
+		   maxElementsInMemory="5" 
+		   maxElementsOnDisk="10"  
 		   eternal="false" 
-		   timeToIdleSeconds="120" 
+		   timeToIdleSeconds="30"
+		   timeToLiveSeconds="60"  
 		   overflowToDisk="true" 
 		   diskPersistent="true"
-		   memoryStoreEvictionPolicy="LRU"/> -->
+		   memoryStoreEvictionPolicy="LRU"/>
 	
 	<!-- com.cms.entity.TestEntity -->
 	<cache name="TestEntity"
