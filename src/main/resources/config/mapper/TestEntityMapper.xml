@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTDMapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
  
-<mapper namespace="config.mapper">
-    <select id="test" resultType="com.cms.entity.TestEntity" parameterType="Integer">
+<mapper namespace="TestEntity">
+	
+	<!--
+		<cache/>: 
+			默认的二级缓存,mybatis自带的实现:接口 org.apache.ibatis.cache.Cache 需要实现该接口
+									        默认的实现类 org.apache.ibatis.cache.impl.PerpetualCache
+			缺点:mybatis自带的二级缓存无法实现分布式缓存.
+									   
+		<cache eviction="LRU" flushInterval="60000" size="512" readOnly="true"/>:
+			指定参数的二级缓存: LRU策略,每60s刷新,最大存储512个对象,只读.
+		
+		上面两个是mybatis自带的缓存,底层有HashMap实现,无法实现分布式缓存.
+		
+    	以下两个<cache>用的是ehcache缓存,第一个可以输出日志,第二个不输出日志, type指定所用缓存类型
+     	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+     	<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+     	并且只需配置上面两个之一即可,不用再项目中显示配置ehcache,
+     		mybatis-ehcache.jar即上面两个类已经创建了CacheManager, 通过CacheManager.create()创建, 单例模式,
+     		默认加载classpath路径下的ehcache.xml文件, 若没有则加载ehcache.jar下的ehcache-failsafe.xml文件.
+    -->
+	<!-- <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/> -->
+    <!-- <cache/> -->
+    
+    <select id="test" resultType="TestEntity" parameterType="Integer">
         select * from test where id =#{id}
     </select>
     
