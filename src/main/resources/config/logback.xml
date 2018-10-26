@@ -22,13 +22,13 @@
 	<!-- 设置日志输出格式: %d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度  , %logger:class全名 {20}限制长度, %file文件名
     	%msg：日志消息，%n是换行符  , %line多少行    (显示颜色需要安装ansi escape in console插件) -->
 	<!-- %d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%thread] - %msg %logger{80}:[%line]%n
-		 %yellow(%date{yyyy-MM-dd HH:mm:ss}) |%highlight(%-5level) |%blue(%thread) |%blue(%file:%line) |%green(%logger) |%cyan(%msg%n) 
+		 %yellow(%date{yyyy-MM-dd HH:mm:ss.SSS}) |%highlight(%-5level) |%blue(%thread) |%blue(%file:%line) |%green(%logger) |%cyan(%msg%n) 
 		 
-		 %date{yyyy-MM-dd HH:mm:SSS} [%-5level] - %msg [%thread] [%logger:%line] %n
-		 %yellow(%date{yyyy-MM-dd HH:mm:ss}) [%highlight(%-5level)] - %red(%msg) [%blue(%thread)] [%green(%logger:%line)] %n
+		 %date{yyyy-MM-dd HH:mm:SSS} [%-5level] [%msg] [%thread] [%logger:%line] %n
+		 %yellow(%date{yyyy-MM-dd HH:mm:ss.SSS}) [%highlight(%-5level)] - %red(%msg) [%blue(%thread)] [%green(%logger:%line)] %n
 	-->
 	<property name="CONSOLE_LOG_PATTERN"
-		value="%yellow(%date{yyyy-MM-dd HH:mm:ss}) [%highlight(%-5level)] - %red(%msg) [%blue(%thread)] [%green(%logger:%line)] %n" />
+		value="[%yellow(%date{yyyy-MM-dd HH:mm:ss.SSS})][%highlight(%-5level)][%red(%msg)][%blue(%thread)][%green(%logger:%line)]%n" />
 	
     <!-- ConsoleAppender 控制台输出日志 -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
@@ -67,7 +67,7 @@
         <encoder>
             <pattern>
                 <!-- 设置日志输出格式 -->
-                %d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %logger - %msg%n
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %logger:%line - %msg%n
             </pattern>
         </encoder>
     </appender>
@@ -94,7 +94,7 @@
             </TimeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %logger - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %logger:%line - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -114,7 +114,7 @@
             </TimeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %logger - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %logger:%line - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -134,7 +134,7 @@
             </TimeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %logger - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %logger:%line - %msg%n</pattern>
         </encoder>
     </appender>
 
@@ -154,7 +154,7 @@
             </TimeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %logger - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] %logger:%line - %msg%n</pattern>
         </encoder>
     </appender>
 
