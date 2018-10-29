@@ -1,16 +1,24 @@
 package com.test.springTest;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
-
+import java.util.Locale;
+import javax.sql.DataSource;
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
-
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
 import com.cms.service.TestService;
 import com.entity.TestEntityClass;
-import com.test.EhcacheTest;
 import com.test.spring.factoryBean.TestEntityClassFactoryBean;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
@@ -78,6 +86,9 @@ public class SpringTest extends SpringTestBase{
 		
 		System.out.println(">>>update");
 		System.out.println(test.updateByCache(1));
+		cache = singletonCacheManager.getCache("myTest");
+		showCache(cache);
+		System.out.println(">>>getAgain");
 		System.out.println(test.getByCache(1));
 		
 		System.out.println(">>>myTest");
@@ -122,7 +133,7 @@ public class SpringTest extends SpringTestBase{
 	}
 	
 	/**
-	 * 测试FactoryBean
+	 * 测试FactoryBean, 需要放开spring-test.xml相应的注释
 	 */
 	@Test
 	public void testFactoryBean() {
@@ -140,6 +151,88 @@ public class SpringTest extends SpringTestBase{
 			System.out.println(testEntityClass1.hashCode() + ":" + testEntityClass1);
 		} else {
 			System.out.println("Not exist testFactoryBean");
+		}
+	}
+	
+	/**
+	 * ApplicationContext拥有BeanFactory的功能外,还提供资源获取,消息解析,事件处理与传播等功能
+	 * @throws IOException 
+	 */
+	@Test
+	public void testApplicationContext() throws IOException {
+		System.out.println(">>>testApplicationContext");
+		
+		System.out.println("###Resource");
+		ApplicationContext context = getApplicationContent();
+		Resource resource = context.getResource("classpath:config/redis.xml");
+		System.out.println(resource.exists());
+		System.out.println(resource.getFilename());
+		System.out.println(resource.getURL());
+		System.out.println(resource.getURI());
+		try {
+			System.out.println(IOUtils.toString(resource.getInputStream()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("\n###Message");
+		System.out.println(context.getMessage("name", new Object[] {"名字", "张二狗"}, Locale.getDefault()));
+		System.out.println(context.getMessage("name", new Object[] {"name", "dog two"}, Locale.US));
+		
+		System.out.println("\n###TransactionManager");
+		// TODO
+	}
+	
+	@Value("${jdbc.driverClassName}")
+	private String jdbcDriverClassName;
+	
+	@Value("${jdbc.url}")
+	private String url;
+	
+	@Value("${jdbc.username}")
+	private String username;
+	
+	@Value("${jdbc.password}")
+	private String password;
+	
+	/**
+	 * SpringJBCD
+	 */
+	@Test
+	public void jdbc() {
+		System.out.println(">>>Begin jdbc()");
+		
+		System.out.println("###原生jdbc");
+		System.out.println(jdbcDriverClassName);
+		System.out.println(url);
+		System.out.println(username);
+		System.out.println(password);
+		String sql = "select count(*) from test";
+		try {
+			Class.forName(jdbcDriverClassName);
+			//每一次都取重新获取一个Connection连接
+			Connection connect = DriverManager.getConnection(url, username, password);
+			PreparedStatement pst = connect.prepareStatement(sql);
+			ResultSet rs = pst.executeQuery();
+			while(rs.next()) {
+				System.out.println("jdbc:" + rs.getString(1));
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println("###dataSource数据库连接池");
+		DataSource dataSource = getBean("dataSource");
+		try {
+			//通过数据库连接池,每一次从数据库连接池里取有效的连接,避免每一次都取新的连接
+			Connection connect1 = dataSource.getConnection();
+			Connection connect2 = dataSource.getConnection();
+			System.out.println(">>>" + connect1 + "|");
+			System.out.println(">>>" + connect2 + "|");
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 	
