@@ -1,6 +1,8 @@
 package com.test.spring.factoryBean;
 
 import java.util.Date;
+
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import com.entity.TestEntityClass;
 
@@ -9,7 +11,7 @@ import com.entity.TestEntityClass;
  * @author xieyu
  *
  */
-public class TestEntityClassFactoryBean implements FactoryBean<TestEntityClass>{
+public class TestEntityClassFactoryBean implements FactoryBean<TestEntityClass>, BeanNameAware{
 	private String id;
 	private String name;
 	private Integer no;
@@ -28,5 +30,10 @@ public class TestEntityClassFactoryBean implements FactoryBean<TestEntityClass>{
 	@Override
 	public boolean isSingleton() {
 		return true;
+	}
+
+	@Override
+	public void setBeanName(String name) {
+		System.out.println(">>>>>>>" + name);
 	}
 }
