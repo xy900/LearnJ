@@ -133,7 +133,7 @@ default-lazy-init="true">
 			       继续创建同名的CacheManager会报错, 加上shared熟悉会引用已经创建的cacheManager,故可以解决该问题
 			>>>或者加上 lazy-init="false",使此缓存管理器的初始化优先于mybatis中的二级缓存,由于mybhttps://www.baidu.com/s?rtt=1&bsst=1&cl=2&tn=news&word=%22cache%3Aannotation-driven%22%20%E7%9A%84%E5%89%8D%E7%BC%80%20%22cache%22%20%E6%9C%AA%E7%BB%91%E5%AE%9Aatis二级缓存创建的CacheManager是单例模式,所有直接用同名(__DEFAULT__)的CacheManager.
 	-->
-	<cache:annotation-driven cache-manager="cacheManager"/><!-- 启用缓存注解功能,否则注解不生效,并且要配置在spring文件中 -->
+	<cache:annotation-driven cache-manager="cacheManager"/><!-- 启用缓存注解功能,否则注解不生效,并且要声明在spring主配置文件中 -->
 	<bean id="cacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" lazy-init="false">
 		<property name="configLocation" value="classpath:config/ehcache.xml" />
 	</bean>
@@ -143,7 +143,17 @@ default-lazy-init="true">
     </bean>
 	
 	
-	
+	<!-- 国际化文件 -->
+	<!-- org.springframework.context.support.ReloadableResourceBundleMessageSource 可以定时刷新资源文件(cacheSeconds) -->
+	<!-- org.springframework.context.support.ResourceBundleMessageSource -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		 <property name="cacheSeconds" value="60"></property>
+         <property name="basenames">
+             <list>
+                 <value>config/messages/messages</value>
+            </list>
+         </property>
+     </bean>
 	
 	
 	<import resource="spring-test.xml"/>
