@@ -51,6 +51,7 @@ public class TestServiceImpl implements TestService{
 	@Override
 	@CacheEvict(value = "myTest")
 	public int updateByCache(Object obj) {
+		System.out.println(">>>begin updateByCache");
 		int count =  testdao.updateById("update", obj);
 		return count;
 	}
