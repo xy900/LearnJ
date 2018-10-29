@@ -28,6 +28,8 @@
 	<commons-discovery.version>0.5</commons-discovery.version>
 	<commons-fileupload.version>1.3.3</commons-fileupload.version>
 	<commons-io.version>2.6</commons-io.version>
+	<commons-lang.version>2.6</commons-lang.version>
+	<commons-lang3.version>3.4</commons-lang3.version>
 	<commons-logging.version>1.2</commons-logging.version>
 	<commons-net.version>2.2</commons-net.version>
 	<dom4j.version>1.6.1</dom4j.version>
@@ -171,6 +173,27 @@
             <version>${spring.version}</version>
             <scope>test</scope>
     </dependency>
+    <!-- common-lang -->
+    <!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
+	<dependency>
+	    <groupId>commons-lang</groupId>
+	    <artifactId>commons-lang</artifactId>
+	    <version>${commons-lang.version}</version>
+	</dependency>
+	<!-- commons-io -->
+	<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+	<dependency>
+	    <groupId>commons-io</groupId>
+	    <artifactId>commons-io</artifactId>
+	    <version>${commons-io.version}</version>
+	</dependency>
+	<!-- commons-lang3 -->
+	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+	<dependency>
+	    <groupId>org.apache.commons</groupId>
+	    <artifactId>commons-lang3</artifactId>
+	    <version>${commons-lang3.version}</version>
+	</dependency>
 	
 
   	<dependency>
