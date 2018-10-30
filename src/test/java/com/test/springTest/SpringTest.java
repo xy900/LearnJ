@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
+import org.springframework.jdbc.core.JdbcTemplate;
+import com.cms.dao.JdbcDao;
 import com.cms.service.TestService;
 import com.entity.TestEntityClass;
 import com.test.spring.factoryBean.TestEntityClassFactoryBean;
@@ -212,6 +214,7 @@ public class SpringTest extends SpringTestBase{
 			Class.forName(jdbcDriverClassName);
 			//每一次都取重新获取一个Connection连接
 			Connection connect = DriverManager.getConnection(url, username, password);
+			System.out.println(">>>" + connect);
 			PreparedStatement pst = connect.prepareStatement(sql);
 			ResultSet rs = pst.executeQuery();
 			while(rs.next()) {
@@ -233,7 +236,28 @@ public class SpringTest extends SpringTestBase{
 			System.out.println(">>>" + connect2 + "|");
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}		
+		
+		System.out.println("###Spring dataSource");//不是连接池,每次都创建新连接
+		DataSource springDataSource = getBean("springDataSource");
+		try {
+			//通过数据库连接池,每一次从数据库连接池里取有效的连接,避免每一次都取新的连接
+			Connection connect1 = springDataSource.getConnection();
+			Connection connect2 = springDataSource.getConnection();
+			System.out.println(">>>" + connect1 + "|");
+			System.out.println(">>>" + connect2 + "|");
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+		
+		System.out.println("###JdbcTemplate");
+		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+		Integer integer = jdbcTemplate.queryForObject(sql, Integer.class);
+		System.out.println(">>>count:" + integer);
+		
+		System.out.println("###JdbcDaoSupport");
+		JdbcDao jdbcDao = getBean(JdbcDao.class);
+		System.out.println(">>>count:" + jdbcDao.queryForObject(sql, Integer.class));
 	}
 	
 }
