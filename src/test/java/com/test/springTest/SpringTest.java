@@ -5,7 +5,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 import java.util.Locale;
 import javax.sql.DataSource;
@@ -219,6 +221,22 @@ public class SpringTest extends SpringTestBase{
 			ResultSet rs = pst.executeQuery();
 			while(rs.next()) {
 				System.out.println("jdbc:" + rs.getString(1));
+			}
+			
+			//获取数据库表中的字段类型
+			System.out.println(">>>字段类型");
+			pst = connect.prepareStatement("select * from test");
+			rs = pst.executeQuery();
+			ResultSetMetaData resultSetMetaData = rs.getMetaData();
+			int columnCount = resultSetMetaData.getColumnCount();
+			System.out.println("ColumnCount : " + columnCount);
+			for (int j = 1; j <= columnCount; j++) {
+				//字段名-字段类型(Types)
+				System.out.println(resultSetMetaData.getColumnName(j) + "-" + resultSetMetaData.getColumnType(j));
+				System.out.println(resultSetMetaData.getColumnType(j) == Types.VARCHAR);
+			}
+			while(rs.next()) {
+				System.out.println("jdbc:" + rs.getString(1) + "," + rs.getString(2));
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
