@@ -16,7 +16,7 @@ default-lazy-init="true">
 	<!-- <bean id="testFactoryBean" class="com.test.spring.factoryBean.TestEntityClassFactoryBean">
 	</bean> -->
 	
-	<!-- 由spring提供,不是连接池,每次都会创建一个连接s -->
+	<!-- 由spring提供,不是连接池,每次都会创建一个连接 -->
 	<bean id="springDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name = "url" value = "${jdbc.url}" />
         <property name = "username" value = "${jdbc.username}" />    
