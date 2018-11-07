@@ -144,10 +144,10 @@ default-lazy-init="true">
 	
 	
 	<!-- 国际化文件 -->
-	<!-- org.springframework.context.support.ReloadableResourceBundleMessageSource 可以定时刷新资源文件(cacheSeconds) -->
+	<!-- org.springframework.context.support.ReloadableResourceBundleMessageSource 可以定时刷新资源文件(cacheSeconds,-1为永不刷新) -->
 	<!-- org.springframework.context.support.ResourceBundleMessageSource -->
-	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-		 <property name="cacheSeconds" value="60"></property>
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		 <property name="cacheSeconds" value="60"/>
          <property name="basenames">
              <list>
                  <value>config/messages/messages</value>
