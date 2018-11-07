@@ -1,5 +1,6 @@
 package com.cms.service;
 
+import java.util.List;
 import com.cms.entity.TestEntity;
 
 public interface TestService {
@@ -13,4 +14,6 @@ public interface TestService {
 	TestEntity getByCache(Integer key);
 	
 	int updateByCache(Object obj);
+	
+	List<TestEntity> getListById(String state, Integer key);
 }

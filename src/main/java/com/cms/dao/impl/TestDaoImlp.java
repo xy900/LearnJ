@@ -1,5 +1,6 @@
 package com.cms.dao.impl;
 
+import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.cms.dao.BaseDao;
@@ -22,6 +23,11 @@ public class TestDaoImlp extends BaseDao implements TestDao{
 	@Override
 	public int updateById(String state, Object obj) {
 		return update(state, obj);
+	}
+
+	@Override
+	public List<TestEntity> getListById(String state, Integer key) {
+		return selectList(state, key);
 	}
 
 }

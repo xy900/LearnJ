@@ -20,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import com.cms.dao.JdbcDao;
+import com.cms.entity.TestEntity;
 import com.cms.service.TestService;
 import com.entity.TestEntityClass;
 import com.test.spring.factoryBean.TestEntityClassFactoryBean;
@@ -30,6 +31,49 @@ public class SpringTest extends SpringTestBase{
 	
 	@Autowired
 	private TestService test;
+	
+	/**
+	 * association关联查询,懒加载
+	 */
+	@Test
+	public void test0() {
+		System.out.println("###test-association:1");
+		List<TestEntity> list  = test.getListById("testList", null);
+		if (list != null) {
+			System.out.println(">>>size:" + list.size());
+			for (TestEntity ele : list) {
+				System.out.println("id : " + ele.getId());
+				System.out.println(ele);
+			}
+		}
+		
+		System.out.println("\n###test0-association:2");
+		list  = test.getListById("testList2", null);
+		if (list != null) {
+			System.out.println(">>>size:" + list.size());
+			for (TestEntity ele : list) {
+				System.out.println("id : " + ele.getId());
+				System.out.println(ele);
+			}
+		}
+	}
+	
+	/**
+	 * collection集合查询,懒加载
+	 */
+	@Test
+	public void test01() {
+		System.out.println("###test-collection:0");
+		List<TestEntity> list  = test.getListById("testList3", null);
+		if (list != null) {
+			System.out.println(">>>size:" + list.size());
+			for (TestEntity ele : list) {
+				System.out.println("id : " + ele.getId() + ", child size : " + (ele==null?0:ele.getChild().size()));
+				System.out.println(ele);
+			}
+		}
+	}
+	
 	/**
 	 * 测试二级缓存
 	 */

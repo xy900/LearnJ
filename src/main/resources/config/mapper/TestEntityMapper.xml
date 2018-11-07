@@ -31,4 +31,86 @@
     <update id="update" parameterType="Integer">
     	update test set name='succes121' where id=#{id}
     </update>
+    
+    <!--===================== association关联查询,懒加载 ===================== -->
+    <!-- 关联association(多对一): way-1,通过一次查询出所有的信息,有时不用关联的信息,也会查出来
+    	select * from test a 
+    	left join test b on a.pid = b.id
+     -->
+    <resultMap type="TestEntity" id="EntityList"><!-- resultMap可以解决属性和字段不一致的问题 -->
+    	<id property="id" column="id" />
+    	<result property="name" column="name"/>
+    	<result property="pid" column="pid"/>
+    	<association property="parent" javaType="TestEntity">
+    		<id property="id" column="p_id"/>
+    		<result property="name" column="p_name"/>
+    	</association>
+    </resultMap>
+    <select id="testList" resultMap="EntityList" parameterType="Integer"><!-- 这里使用resultMap -->
+        select 
+        	a.id as id,
+        	a.name as name,
+        	a.pid as pid,
+        	b.id as p_id,
+        	b.name as p_name
+        from test a
+        left join test b on a.pid = b.id
+        <where>
+        	<if test="id != null">
+        		 a.id = #{id}
+        	</if>
+        </where>
+    </select>
+    
+    <!-- 关联association(多对一): way-2,分步查询,要查询需求的信息时,才会进行第二次查询,即懒加载
+    	select * from test
+    	select * from test where id = ?  //这里的?为上一步的查询出来的pid
+    -->
+    <resultMap type="TestEntity" id="EntityList2">
+    	<id property="id" column="id" />
+    	<result property="name" column="name"/>
+    	<result property="pid" column="pid"/>
+    	<!-- select:指定延迟加载需要执行的statement的id(根据pid查询的statement)
+                    	如果不在本文件中，需要加上namespace
+             property:resultMap中type指定类中的属性名
+             column:和select查询关联的字段pid -->
+    	<association property="parent" column="pid" select="getParent"/>
+    </resultMap>
+    <select id="testList2" resultMap="EntityList2" parameterType="Integer">
+        select * from test
+        <where>
+        	<if test="id != null">
+        		 id = #{id}
+        	</if>
+        </where>
+    </select>
+    <select id="getParent" parameterType="Integer" resultType="TestEntity">
+    	select * from test where id=#{id}
+    </select>
+    
+    
+    <!--===================== collection集合查询,懒加载 =====================-->
+	<resultMap type="TestEntity" id="EntityList3">
+	 	<id property="id" column="id" />
+	 	<result property="name" column="name"/>
+	 	<result property="pid" column="pid"/>
+	 	<!-- select:指定延迟加载需要执行的statement的id(根据pid查询的statement)
+	       		如果不在本文件中，需要加上namespace
+			property:resultMap中type指定类中的属性名
+			column:和select查询关联的字段pid -->
+		<association property="parent" column="pid" select="getParent"/>
+		<collection property="child" column="id" select="getChild"/>
+	</resultMap>
+	<select id="testList3" resultMap="EntityList3" parameterType="Integer">
+	    select * from test
+	    <where>
+	    	<if test="id != null">
+	    		 id = #{id}
+	    	</if>
+	    </where>
+	</select>
+	<select id="getChild" parameterType="Integer" resultType="TestEntity">
+		select * from test where pid=#{id}
+	</select>
+    
 </mapper>

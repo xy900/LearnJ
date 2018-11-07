@@ -1,5 +1,6 @@
 package com.cms.service.impl;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -54,6 +55,11 @@ public class TestServiceImpl implements TestService{
 		System.out.println(">>>begin updateByCache");
 		int count =  testdao.updateById("update", obj);
 		return count;
+	}
+
+	@Override
+	public List<TestEntity> getListById(String state, Integer key) {
+		return testdao.getListById(state, key);
 	}
 
 }

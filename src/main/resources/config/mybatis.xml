@@ -5,7 +5,7 @@
 	<!-- 全局配置参数 -->
 	<settings>
 		<!-- 是否延迟加载  所有关联对象都会延迟加载-->
-		<setting name="lazyLoadingEnabled" value="false" />
+		<setting name="lazyLoadingEnabled" value="true" />
 		<!-- 是否开启二级缓存 -->
 		<setting name="cacheEnabled" value="false"/>
 		<!-- 打印日志 -->
