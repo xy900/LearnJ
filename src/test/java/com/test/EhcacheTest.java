@@ -56,15 +56,18 @@ public class EhcacheTest {
 	}
 	
 	public static void pringCacheElement(Cache cache) {
-		List<?> list = cache.getKeys();
+		List<?> list = cache.getKeys();//获取Element的name列表
 		if (list == null || list.size() == 0) {
 			System.err.println(">>>>>pringCacheElement(cache): cache is null or size is 0 !");
 			return; 
 		}
 		System.out.println("Cache(" + cache.getName() + ") size is " + list.size());
 		for (Object object : list) {
-			System.out.print(object + ", ");
+			System.out.print(object + " ");
+			Element element = cache.get(object);//通过name获取Element
+			System.out.println("Element[" + element.getObjectKey() + ", " + element.getObjectValue() + "]");
 		}
 		System.out.println();
+		cache.removeAll();//清除所有element
 	}
 }
