@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,7 +35,11 @@ public class Test {
 	private TestPoint point;
 	
 	@Autowired
-	private TestPoint testPoint;
+	@Qualifier("testPoint") //查找指定name的bean
+	private TestPoint testPoint1;//默认通过byType查找, 有多个bean再通过byName查找
+	
+	@Autowired
+	private TestPoint pointSpring;
 	
 	@Autowired
 	private TestService testService;
@@ -67,13 +72,14 @@ public class Test {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/2.jspx", produces = "application/json;charset=utf-8")
+	@RequestMapping(value="/22.do", produces = "application/json;charset=utf-8")
 	public String test2jspx(HttpServletRequest request, HttpServletResponse response, Model model) {
 		System.out.println(request.getRequestURI());
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("name", "李三");
 		jsonObject.put("age", 25);
-		System.out.println(testPoint);
+		System.out.println(testPoint1);
+		System.out.println(pointSpring);
 		return jsonObject.toString();
 	}
 	
