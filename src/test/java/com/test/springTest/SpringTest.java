@@ -19,6 +19,8 @@ import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import com.cms.component.TestPoint;
 import com.cms.dao.JdbcDao;
 import com.cms.entity.TestEntity;
 import com.cms.service.TestService;
@@ -300,6 +302,7 @@ public class SpringTest extends SpringTestBase{
 			e.printStackTrace();
 		}		
 		
+		/***   Spring dataSource   */
 		System.out.println("###Spring dataSource");//不是连接池,每次都创建新连接
 		DataSource springDataSource = getBean("springDataSource");
 		try {
@@ -312,14 +315,33 @@ public class SpringTest extends SpringTestBase{
 			e.printStackTrace();
 		}
 		
+		/***   Spring JdbcTemplate   */
 		System.out.println("###JdbcTemplate");
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 		Integer integer = jdbcTemplate.queryForObject(sql, Integer.class);
 		System.out.println(">>>count:" + integer);
 		
+		/***   Spring JdbcDaoSupport   */
 		System.out.println("###JdbcDaoSupport");
 		JdbcDao jdbcDao = getBean(JdbcDao.class);
 		System.out.println(">>>count:" + jdbcDao.queryForObject(sql, Integer.class));
+	}
+	
+	/**
+	 * AOP
+	 */
+	@Test
+	public void testAop() {
+		System.out.println("===new bean===");//new出来的对象无法实现AOP
+		System.out.println("Begin new TestPoint");
+		TestPoint test = new TestPoint();
+		System.out.println("Begin TestPoint toString()");
+		System.out.println(test.toString());
+		System.out.println("After TestPoint toString()");
+		
+		System.out.println("===spring bean===");//由spring管理的bean可以实现AOP
+		test = getBean("pointSpring");
+		System.out.println(test.toString());
 	}
 	
 }
