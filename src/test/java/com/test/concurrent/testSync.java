@@ -1,7 +1,10 @@
 package com.test.concurrent;
 
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 /** 测试StringBuffer和StringBuilder是否线程安全;
@@ -9,28 +12,53 @@ import java.util.concurrent.locks.ReentrantLock;
  * 
  * StringBuffer 线程安全  
  * StringBuilder 线程非安全
- * @author 909974
+ * AtomicInteger 原子操作类 线程安全
+ * @author XieYu
  * 
  */
 public class testSync {
 	public static void main(String[] argaa) {
+		int threadCount = 200;//线程个数
+		CyclicBarrier cyclicBarrier = new CyclicBarrier(threadCount);//设置屏障,全部线程到达之后再执行
+		
 		MyString my = new MyString();
 		StringBuilder sbBuilder = new StringBuilder();
 		StringBuffer stringBuffer = new StringBuffer();
+		AtomicInteger atomicInteger = new AtomicInteger(0);//原子操作类
+		
 		//创建线程池
 		ExecutorService pool = Executors.newCachedThreadPool();
 		//创建多个线程去处理MyString, StringBuilder, StringBuffer三个对象
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < threadCount; i++) {
 			pool.execute(new Runnable() {
 				@Override
 				public void run() {
+					try {
+						System.out.println("等待...");
+						cyclicBarrier.await();//阻塞线程
+					} catch (InterruptedException e) {
+						System.out.println("InterruptedException!");
+						e.printStackTrace();
+					} catch (BrokenBarrierException e) {
+						System.out.println("BrokenBarrierException!");
+						e.printStackTrace();
+					}
+					
+					System.out.println("开始执行...");
 					for (int j = 0; j < 1000; j++) {
 						my.append(1);
 						sbBuilder.append("1");
 						stringBuffer.append("1");
-						System.out.println("MyString:" + my.getNum() + ", StringBuilder:" + sbBuilder.length() + 
-								", StringBuffer:" + stringBuffer.length());
+						atomicInteger.incrementAndGet();
+						/*System.out.println("time:" +System.currentTimeMillis() + ", currentThread:" + Thread.currentThread()
+							+ ", MyString:" + my.getNum() + ", StringBuilder:" + sbBuilder.length()
+							+ ", StringBuffer:" + stringBuffer.length());*/
 					}
+					System.out.println("time:" +System.currentTimeMillis() + ", currentThread:" + Thread.currentThread()
+						+ "\n         , MyString:" + my.getNum() + ", StringBuilder:" + sbBuilder.length()
+						+ ", StringBuffer:" + stringBuffer.length()
+						+ ", AtomicInteger:" + atomicInteger);
+					
 				}
 			});
 		}
@@ -41,7 +69,7 @@ public class testSync {
 
 /** 创建测试类
  *  使用不同的方法保证线程安全
- * @author xieyu
+ * @author XieYu
  * 
  */
 class MyString {
