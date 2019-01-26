@@ -1,5 +1,6 @@
 package com.cms.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -35,6 +36,11 @@ public class TestServiceImpl implements TestService{
 		System.out.println(x.equals("test"));//测试事务回滚是否生效
 		return count;
 	}
+
+	@Override
+	public int updateCount(HashMap<String, Object> map) {
+		return testdao.updateById("updateCount", map);
+	}
 	
 	/**
 	 * @Cacheable value:cache名, key:属性名, condition:过滤缓存结果
@@ -61,5 +67,4 @@ public class TestServiceImpl implements TestService{
 	public List<TestEntity> getListById(String state, Integer key) {
 		return testdao.getListById(state, key);
 	}
-
 }

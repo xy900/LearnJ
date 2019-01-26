@@ -32,6 +32,10 @@
     	update test set name='succes121' where id=#{id}
     </update>
     
+    <update id="updateCount" parameterType="hashmap">
+    	update test set count=#{count} where id=#{id}
+    </update>
+    
     <!--===================== association关联查询,懒加载 ===================== -->
     <!-- 关联association(多对一): way-1,通过一次查询出所有的信息,有时不用关联的信息,也会查出来
     	select * from test a 

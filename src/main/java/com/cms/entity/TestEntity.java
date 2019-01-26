@@ -9,6 +9,7 @@ public class TestEntity implements Serializable{
 	private Integer id;
 	private String name;
 	private Integer pid;
+	private Integer count;
 	
 	private List<TestEntity> child;
 	private TestEntity parent;
@@ -43,10 +44,16 @@ public class TestEntity implements Serializable{
 	public void setName(String name) {
 		this.name = name;
 	}
+	public Integer getCount() {
+		return count;
+	}
+	public void setCount(Integer count) {
+		this.count = count;
+	}
 	
 	@Override
 	public String toString() {
-		return "TestEntity [id=" + id + ", name=" + name + ", pid=" + pid + ", parent=" + parent + ", child=" + child
-				+ "]";
+		return "TestEntity [id=" + id + ", name=" + name + ", pid=" + pid + ", count=" + count + ", child=" + child
+				+ ", parent=" + parent + "]";
 	}
 }
