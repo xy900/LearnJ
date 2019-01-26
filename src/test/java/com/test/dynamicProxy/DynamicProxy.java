@@ -3,6 +3,7 @@ package com.test.dynamicProxy;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import com.myinterface.MethodInterface;
 
 /**
  * 动态代理类
@@ -19,6 +20,10 @@ public class DynamicProxy implements InvocationHandler{
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		System.out.println("begin!");
 		System.out.println("method: " + method.getName());
+		//获取方法上的注解
+		MethodInterface methodInterface = method.getAnnotation(MethodInterface.class);
+		System.out.println("MethodInterface: " + methodInterface);
+		
 		System.out.print("args: ");
 		if (args != null) {
 			for (Object o : args) {
