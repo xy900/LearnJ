@@ -27,7 +27,15 @@ public class JedisUtils
     private static JedisPool pool = (JedisPool) ApplicationContextHelper.applicationContext
     		.getBean("jedisPool");
 
+    public static Jedis getJedis() {
+    	return pool.getResource();
+    }
 
+    public static void returnJedis(Jedis resource) {
+    	if (resource == null) return;
+    	pool.returnResourceObject(resource);
+    }
+    
     public static void lpush(String key, String value)
     {
 
@@ -71,6 +79,33 @@ public class JedisUtils
             }
         }
 
+    }
+    
+    /** 设置值, 若键存在则不设置
+     * @param key
+     * @param value
+     * @return 1:设置成功, 2:设置成功
+     */
+    public static Long setStringNx(String key, String value)
+    {
+        ShardedJedis jedis = null;
+        try
+        {
+            jedis = jedisPool.getResource();
+            Long result = jedis.setnx(key, value);
+            logger.info("setStringNx[key:{}] is {}", key, result);
+            return result;
+        }catch(Exception e) {
+        	logger.error("获取jedis失败.", e);
+        }
+        finally
+        {
+            if (null != jedis)
+            {
+                jedisPool.returnResourceObject(jedis);
+            }
+        }
+		return 0L;
     }
 
     public static String lPop(String key) throws Exception
