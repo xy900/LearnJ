@@ -73,6 +73,7 @@
 	<redis.version>2.7.2</redis.version>
 	<ehcache-mybatis.version>1.1.0</ehcache-mybatis.version>
 	<zookeeper.version>3.4.6</zookeeper.version>
+	<poi.version>3.14</poi.version>
   </properties>
   
   <dependencies>
@@ -216,6 +217,38 @@
     	<artifactId>zookeeper</artifactId>
     	<version>${zookeeper.version}</version>
 	</dependency>
+	
+	
+	<dependency>
+		<groupId>fr.opensagres.xdocreport</groupId>
+		<artifactId>org.apache.poi.xwpf.converter.xhtml</artifactId>
+		<version>1.0.6</version>
+	</dependency>
+	<dependency>
+    	<groupId>org.apache.poi</groupId>
+    	<artifactId>poi</artifactId>
+    	<version>${poi.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+	<dependency>
+	    <groupId>org.apache.poi</groupId>
+	    <artifactId>poi-ooxml</artifactId>
+	    <version>${poi.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-scratchpad -->
+	<dependency>
+	    <groupId>org.apache.poi</groupId>
+	    <artifactId>poi-scratchpad</artifactId>
+	    <version>${poi.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml-schemas -->
+	<dependency>
+	    <groupId>org.apache.poi</groupId>
+	    <artifactId>poi-ooxml-schemas</artifactId>
+	    <version>${poi.version}</version>
+	</dependency>
+	
+	
 	
 
   	<dependency>
