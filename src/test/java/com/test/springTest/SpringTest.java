@@ -8,8 +8,15 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import javax.sql.DataSource;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -24,10 +31,13 @@ import com.cms.component.TestPoint;
 import com.cms.dao.JdbcDao;
 import com.cms.entity.TestEntity;
 import com.cms.service.TestService;
+import com.cms.utils.JedisLock;
+import com.cms.utils.JedisUtils;
 import com.entity.TestEntityClass;
 import com.test.spring.factoryBean.TestEntityClassFactoryBean;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import redis.clients.jedis.Jedis;
 
 public class SpringTest extends SpringTestBase{
 	
@@ -342,6 +352,100 @@ public class SpringTest extends SpringTestBase{
 		System.out.println("===spring bean===");//由spring管理的bean可以实现AOP
 		test = getBean("pointSpring");
 		System.out.println(test.toString());
+	}
+	
+	static Long lockCount = 0L;
+	static Long lockCount1 = 0L;
+	
+	/**
+	 * redis分布式锁
+	 */
+	@Test
+	public void testRedisLock() {
+		System.out.println("\n=======begin========");
+		String prefix = "RedisLock_";
+		TestEntity test1 = test.get("test", 1);
+		TestEntity test2 = test.get("test", 2);
+		if (test1 == null || test2 == null) {
+			System.out.println("\n>>>为空,不测试");
+			return;
+		}
+		
+		long beginTime = System.currentTimeMillis();
+		
+		
+		int threadCount = 500;//线程个数
+		CyclicBarrier cyclicBarrier = new CyclicBarrier(threadCount);//设置屏障,全部线程到达之后再执行
+		CountDownLatch enDownLatch = new CountDownLatch(threadCount);//统计完成数的计数器
+		
+		System.out.println("\n>>>进行测试");
+		//创建线程池
+		ExecutorService pool = Executors.newFixedThreadPool(threadCount*2);
+		for (int i = 0; i < threadCount; i++) {
+			pool.execute(new Runnable() {
+				@Override
+				public void run() {
+					System.out.println("\\n>>>等待...");
+					try {
+						cyclicBarrier.await();//阻塞线程
+					} catch (InterruptedException | BrokenBarrierException e) {
+						System.out.println("\n>>>error");
+						e.printStackTrace();
+					}
+					System.out.println("\\n>>>开始执行...");
+					
+					//1.利用同步块实现线程安全(仅适用于单机系统, 不适用与分布式系统)
+					/*synchronized (TestEntity.class) {
+						TestEntity test1 = test.get("test", 1);
+						HashMap<String, Object> map = new HashMap<>();
+						map.put("id", 1);
+						map.put("count", test1.getCount() - 1);
+						test.updateCount(map);
+					}*/
+					
+					//2.基于redis的分布式锁
+					try {
+						Jedis jedis = JedisUtils.getJedis();
+						JedisLock lock = new JedisLock(jedis, prefix + 1, 10000, 30000);
+						lock.acquire();
+						try {
+							lockCount1++;
+							TestEntity test1 = test.get("test", 1);
+							HashMap<String, Object> map = new HashMap<>();
+							map.put("id", 1);
+							map.put("count", test1.getCount() - 1);
+							test.updateCount(map);
+							JedisUtils.setString(prefix + 11, lockCount1+"");
+						}
+						finally {
+							lock.release();
+							JedisUtils.returnJedis(jedis);
+						}
+					} catch (Exception e) {
+						System.out.println("\n>>>JedisUtils Exception!");
+						e.printStackTrace();
+					}
+					
+					enDownLatch.countDown();
+				}
+			});
+		}
+		pool.shutdown();
+		
+		try {
+			enDownLatch.await();//所有线程执行完毕之后再执行
+			long endTime = System.currentTimeMillis();
+			System.out.println("执行结束, 花费时间" + (endTime-beginTime) + "ms");
+			System.out.println("\n>>>end:");
+			System.out.println("\n>>>初始:" + test1);
+			TestEntity result = test.get("test", 1);
+			System.out.println("\n>>>结束:" + result);
+			System.out.println("\n>>>相差:" + (test1.getCount() - result.getCount()) + ", 线程数:" + threadCount);
+			System.out.println(lockCount + "_" + lockCount1);
+		} catch (InterruptedException e) {
+			System.out.println("\n>>>InterruptedException");
+			e.printStackTrace();
+		}
 	}
 	
 }
