@@ -193,9 +193,9 @@ public class SpringTest extends SpringTestBase{
 	}
 	
 	/**
-	 * 测试FactoryBean, 需要放开spring-test.xml相应的注释
+	 * 测试FactoryBean, 需要放开spring-test.xml相应的注释, 以及@Test注解
 	 */
-	@Test
+	//@Test
 	public void testFactoryBean() {
 		System.out.println("========testFactoryBean========");
 		TestEntityClass testEntityClass = getBean("testFactoryBean");
