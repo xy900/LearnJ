@@ -379,6 +379,8 @@ public class SpringTest extends SpringTestBase{
 		CountDownLatch enDownLatch = new CountDownLatch(threadCount);//统计完成数的计数器
 		
 		System.out.println("\n>>>进行测试");
+		DataSource springDataSource = getBean("springDataSource");
+		
 		//创建线程池
 		ExecutorService pool = Executors.newFixedThreadPool(threadCount*2);
 		for (int i = 0; i < threadCount; i++) {
@@ -403,8 +405,8 @@ public class SpringTest extends SpringTestBase{
 						test.updateCount(map);
 					}*/
 					
-					//2.基于redis的分布式锁
-					try {
+					//2.基于redis的分布式锁  未实现
+					/*try {
 						Jedis jedis = JedisUtils.getJedis();
 						JedisLock lock = new JedisLock(jedis, prefix + 1, 10000, 30000);
 						lock.acquire();
@@ -424,6 +426,42 @@ public class SpringTest extends SpringTestBase{
 					} catch (Exception e) {
 						System.out.println("\n>>>JedisUtils Exception!");
 						e.printStackTrace();
+					}*/
+					
+					//3.使用数据库的排他锁(悲观锁)实现分布式锁
+					Connection connect = null;
+					while(true) {//获取锁时有可能超时抛异常,一直循环,直到获取锁
+						try {
+							lockCount++;
+							connect = springDataSource.getConnection();
+							connect.setAutoCommit(false);//设置为非自动提交模式
+							//select ... for update 查询时会锁住某一记录, 即加锁; 可能表已经被锁住,出现超时异常; 
+							PreparedStatement pst = connect.prepareStatement("select * from test where id = ? for update");
+							pst.setInt(1, 2);//设置属性
+							pst.executeQuery();
+							
+							//操作
+							TestEntity test1 = test.get("test", 1);
+							HashMap<String, Object> map = new HashMap<>();
+							map.put("id", 1);
+							map.put("count", test1.getCount() - 1);
+							test.updateCount(map);
+							lockCount1++;
+							break;
+						} catch (SQLException e) {
+							System.out.println("SQLException1!");
+							e.printStackTrace();
+						} finally {
+							if (connect != null) {//释放锁
+								try {
+									connect.commit();
+									connect.close();
+								} catch (SQLException e) {
+									System.out.println("SQLException2!");
+									e.printStackTrace();
+								}
+							}
+						}
 					}
 					
 					enDownLatch.countDown();

@@ -4,8 +4,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +32,7 @@ import com.cms.component.TestPoint;
 import com.cms.entity.TestEntity;
 import com.cms.service.TestService;
 import com.cms.utils.ApplicationContextHelper;
+import com.cms.utils.JedisLock;
 import com.cms.utils.JedisUtils;
 import net.sf.json.JSONObject;
 import redis.clients.jedis.Jedis;
@@ -180,5 +192,188 @@ public class Test {
 		TestEntity entity = testService.get("test", Integer.valueOf(id));
 		jsonObject = JSONObject.fromObject(entity);
 		return jsonObject.toString();
+	}
+	
+	/** 基于redis的分布式锁  未实现
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="/redisLock.do", produces = "application/json;charset=utf-8")
+	public String redisLock(HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("\n=======begin========");
+		String prefix = "RedisLock_";
+		TestEntity test1 = testService.get("test", 1);
+		TestEntity test2 = testService.get("test", 2);
+		if (test1 == null || test2 == null) {
+			System.out.println("\n>>>为空,不测试");
+			return "not test";
+		}
+		
+		long beginTime = System.currentTimeMillis();
+		
+		int threadCount = 500;//线程个数
+		CyclicBarrier cyclicBarrier = new CyclicBarrier(threadCount);//设置屏障,全部线程到达之后再执行
+		CountDownLatch enDownLatch = new CountDownLatch(threadCount);//统计完成数的计数器
+		
+		System.out.println("\n>>>进行测试");
+		//创建线程池
+		ExecutorService pool = Executors.newFixedThreadPool(threadCount*2);
+		for (int i = 0; i < threadCount; i++) {
+			pool.execute(new Runnable() {
+				@Override
+				public void run() {
+					System.out.println("\\n>>>等待...");
+					try {
+						cyclicBarrier.await();//阻塞线程
+					} catch (InterruptedException | BrokenBarrierException e) {
+						System.out.println("\n>>>error");
+						e.printStackTrace();
+					}
+					System.out.println("\\n>>>开始执行...");
+					
+					try {
+						Jedis jedis = JedisUtils.getJedis();
+						JedisLock lock = new JedisLock(jedis, prefix + 1, 10000, 30000);
+						lock.acquire();
+						try {
+							TestEntity test1 = testService.get("test", 1);
+							HashMap<String, Object> map = new HashMap<>();
+							map.put("id", 1);
+							map.put("count", test1.getCount() - 1);
+							testService.updateCount(map);
+						}
+						finally {
+							lock.release();
+							JedisUtils.returnJedis(jedis);
+						}
+					} catch (Exception e) {
+						System.out.println("\n>>>JedisUtils Exception!");
+						e.printStackTrace();
+					}
+					enDownLatch.countDown();
+				}
+			});
+		}
+		pool.shutdown();
+		TestEntity result = null;
+		try {
+			enDownLatch.await();//所有线程执行完毕之后再执行
+			long endTime = System.currentTimeMillis();
+			System.out.println("执行结束, 花费时间" + (endTime-beginTime) + "ms");
+			System.out.println("\n>>>end:");
+			System.out.println("\n>>>初始:" + test1);
+			result = testService.get("test", 1);
+			System.out.println("\n>>>结束:" + result);
+			System.out.println("\n>>>相差:" + (test1.getCount() - result.getCount()) + ", 线程数:" + threadCount);
+		} catch (InterruptedException e) {
+			System.out.println("\n>>>InterruptedException");
+			e.printStackTrace();
+		}
+		return "相差:" + (test1.getCount() - result.getCount()) + ", 线程数:" + threadCount;
+	}
+	
+	/**
+	 *  基于数据库悲观锁实现的分布式锁
+	 * @return
+	 */
+	private static AtomicInteger count1 = new AtomicInteger(0);
+	private static AtomicInteger count2 = new AtomicInteger(0);
+	private static AtomicInteger error = new AtomicInteger(0);
+	@ResponseBody
+	@RequestMapping(value="/databaseLock.do", produces = "application/json;charset=utf-8")
+	public String databaseLock(HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("\n=======begin========");
+		TestEntity test1 = testService.get("test", 1);
+		TestEntity test2 = testService.get("test", 2);
+		if (test1 == null || test2 == null) {
+			System.out.println("\n>>>为空,不测试");
+			return "not test";
+		}
+		
+		long beginTime = System.currentTimeMillis();
+		
+		int threadCount = 500;//线程个数
+		CyclicBarrier cyclicBarrier = new CyclicBarrier(threadCount);//设置屏障,全部线程到达之后再执行
+		CountDownLatch enDownLatch = new CountDownLatch(threadCount);//统计完成数的计数器
+		
+		System.out.println("\n>>>进行测试");
+		DataSource springDataSource = (DataSource) ApplicationContextHelper.applicationContext
+				.getBean("springDataSource");
+		
+		//创建线程池
+		ExecutorService pool = Executors.newFixedThreadPool(threadCount*2);
+		for (int i = 0; i < threadCount; i++) {
+			pool.execute(new Runnable() {
+				@Override
+				public void run() {
+					System.out.println("\\n>>>等待...");
+					try {
+						cyclicBarrier.await();//阻塞线程
+					} catch (InterruptedException | BrokenBarrierException e) {
+						System.out.println("\n>>>error");
+						e.printStackTrace();
+					}
+					System.out.println("\\n>>>开始执行...");
+					
+					Connection connect = null;
+					while(true) {//获取锁时有可能超时抛异常,一直循环,直到获取锁
+						try {
+							count1.incrementAndGet();
+							connect = springDataSource.getConnection();
+							connect.setAutoCommit(false);//设置为非自动提交模式
+							//select ... for update 查询时会锁住某一记录, 即加锁; 可能表已经被锁住,出现超时异常; 
+							PreparedStatement pst = connect.prepareStatement("select * from test where id = ? for update");
+							pst.setInt(1, 2);//设置属性
+							pst.executeQuery();
+							
+							//操作
+							TestEntity test1 = testService.get("test", 1);
+							HashMap<String, Object> map = new HashMap<>();
+							map.put("id", 1);
+							map.put("count", test1.getCount() - 1);
+							testService.updateCount(map);
+							count2.incrementAndGet();
+							break;
+						} catch (SQLException e) {
+							error.incrementAndGet();
+							System.out.println("SQLException1!");
+							e.printStackTrace();
+						} finally {
+							if (connect != null) {//释放锁
+								try {
+									connect.commit();
+									connect.close();
+								} catch (SQLException e) {
+									error.incrementAndGet();
+									System.out.println("SQLException2!");
+									e.printStackTrace();
+								}
+							}
+						}
+					}
+					
+					enDownLatch.countDown();
+				}
+			});
+		}
+		pool.shutdown();
+		TestEntity result = null;
+		try {
+			enDownLatch.await();//所有线程执行完毕之后再执行
+			long endTime = System.currentTimeMillis();
+			System.out.println("执行结束, 花费时间" + (endTime-beginTime) + "ms");
+			System.out.println("\n>>>end:");
+			System.out.println("\n>>>初始:" + test1);
+			result = testService.get("test", 1);
+			System.out.println("\n>>>结束:" + result);
+			System.out.println("\n>>>相差:" + (test1.getCount() - result.getCount()) + ", 线程数:" + threadCount);
+			System.out.println("try lock:" + count1 + ", success lock:" + count2 + ", error:" + error);
+			count1.set(0);
+			count2.set(0);
+		} catch (InterruptedException e) {
+			System.out.println("\n>>>InterruptedException");
+			e.printStackTrace();
+		}
+		return "相差:" + (test1.getCount() - result.getCount()) + ", 线程数:" + threadCount;
 	}
 }
