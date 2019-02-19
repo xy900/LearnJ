@@ -75,7 +75,7 @@ public class testSync {
 class MyString {
 	final ReentrantLock lock = new ReentrantLock(); //使用可重入锁保证线程安全
 	
-	private volatile Integer num = 0; //volatile关键字   不能保证线程安全
+	private volatile Integer num = 0; //volatile关键字   不能保证线程安全(只能保证可见性和禁止指令重排序, 但不能保证原子性)
 
 	public Integer getNum() {
 		return num;
@@ -93,7 +93,10 @@ class MyString {
 		}*/
 		
 		lock.lock();                         //3.使用可重入锁保证线程安全
-		this.num = this.num + num; 
-		lock.unlock();
+		try {
+			this.num = this.num + num;
+		} finally {
+			lock.unlock();
+		}
 	}
 }
