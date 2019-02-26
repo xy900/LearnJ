@@ -117,7 +117,7 @@ public class LinkedBlockingQueueDemo {
 			for (Thread.State state : states) {
 				stateCount = (thread.getState() == state) ? stateCount + 1 : stateCount;
 				if (thread.getState() == state) {
-					sb.append(thread + ", ");
+					sb.append(thread +  "(ID:" + thread.getId() + ")" + ", ");
 				}
 			}
 		}
