@@ -75,7 +75,7 @@ public class DeadLock {
 	 * @param lock
 	 * @param name
 	 */
-	public static void getLockOfWhichThread(ReentrantLock lock, String name) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+	public static void getLockOfWhichThread(ReentrantLock lock, String name) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		//反射获取Lock中的sync对象
 		Field syncFiled = ReentrantLock.class.getDeclaredField("sync");
 		syncFiled.setAccessible(true);
@@ -85,7 +85,9 @@ public class DeadLock {
 		//获取AbstractOwnableSynchronizer的exclusiveOwnerThread对象(该对象为当前获取锁的线程)
 		Field eotfiled = AbstractOwnableSynchronizer.class.getDeclaredField("exclusiveOwnerThread");
 		eotfiled.setAccessible(true);
-		System.out.println(name + " is : " + eotfiled.get(aws));
+		Thread thread = (Thread) eotfiled.get(aws);
+		System.out.println(name + " is : " + thread);//调用thread的任何方法均会报空指针异常
+		// TODO 获取该线程信息
 	}
 	
 }
