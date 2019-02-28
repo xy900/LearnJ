@@ -86,8 +86,8 @@ public class DeadLock {
 		Field eotfiled = AbstractOwnableSynchronizer.class.getDeclaredField("exclusiveOwnerThread");
 		eotfiled.setAccessible(true);
 		Thread thread = (Thread) eotfiled.get(aws);
-		System.out.println(name + " is : " + thread);//调用thread的任何方法均会报空指针异常
-		// TODO 获取该线程信息
+		System.out.println(name + " is : " + thread +
+				(thread==null?"":", ID : " + thread.getId()));//调用thread的任何方法均会报空指针异常  (原因: 有时候Lock并没有被其他线程获取锁, 即该thread可能为空)
 	}
 	
 }
