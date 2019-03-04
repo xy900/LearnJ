@@ -65,7 +65,9 @@ public class SystemParam {
 		System.out.println("\n>>>jvm");
 		long freeMemory = Runtime.getRuntime().freeMemory() / 1024L / 1024L;
 		long totalMemory = Runtime.getRuntime().totalMemory() / 1024L / 1024L;
+		long maxMemory = Runtime.getRuntime().maxMemory() / 1024L / 1024L;
 		System.out.println("JVM空闲内存大小" + freeMemory + "MB/" + totalMemory + "MB");
+		System.out.println("JVM最大空间" + maxMemory + "MB");
 		
 		RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
         OperatingSystemMXBean os = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
