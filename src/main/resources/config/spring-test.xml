@@ -24,7 +24,10 @@ default-lazy-init="true">
         <property name = "driverClassName" value = "${jdbc.driverClassName}" />
 	</bean>
 	
-	<!-- 使用JdbcDaoSupport, 可以直接获取JdbcTemplate进行操作 -->
+	<!-- 使用JdbcDaoSupport, 可以直接获取JdbcTemplate进行操作;
+		   这里直接将dataSource注入到JdbcDaoSupport中, 然后通过dataSource生成JdbcTemplate对象;
+		   也可以直接注册JdbcTemplate的对象, 将dataSource注入进去, 然后直接用JdbcTemplate取进行操作
+	-->
 	<bean id="jdbcDao" class="com.cms.dao.JdbcDao">
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
