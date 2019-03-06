@@ -57,19 +57,24 @@ public class ZkClient {
 			//getSessionPasswd获取会话秘密
 			System.out.println("\n>>>sessionPasswd:" + new String(zk.getSessionPasswd()));
 			
-			//exists节点是否存在
+			//创建节点并设置默认的监听器
+			if (zk.exists("/zktest", true) == null) {
+				System.out.println("\n>>>create: " 
+					+ zk.create("/zktest", "zktest".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT));
+			}
+			//exists节点是否存在, 并返回Stat元数据
 			System.out.println("\n>>>exists(/zktest):" + zk.exists("/zktest", false));
-			//getData()获取信息
+			//getData()获取date信息
 			System.out.println("\n>>>data(/zktest):" + new String(zk.getData("/zktest", null, null)));
 			//不存在则抛异常
 			System.out.println("\n>>>data(/):" + new String(zk.getData("/", null, null)));
 			
 			//create创建一个临时顺序节点: create /zktest/create 测试 world:anyone:cdrwa
-			System.out.println("\n>>>create:"
+			System.out.println("\n>>>create: "
 					+ zk.create("/zktest/create", "test".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL));
 			
 			//获取children
-			List<String> children = zk.getChildren("/", false);
+			List<String> children = zk.getChildren("/", true);
 			if (children != null) {
 				System.out.println("\n>>>getChildren");
 				for (String child : children) {
