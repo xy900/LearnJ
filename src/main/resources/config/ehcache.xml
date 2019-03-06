@@ -55,4 +55,14 @@
 		   overflowToDisk="true" 
 		   diskPersistent="true"
 		   memoryStoreEvictionPolicy="LRU"/>
+		   
+	<cache name="com.cms.entity.User"
+		   maxElementsInMemory="10"
+		   maxElementsOnDisk="20"  
+		   eternal="false" 
+		   timeToIdleSeconds="120"
+		   timeToLiveSeconds="120" 
+		   overflowToDisk="true" 
+		   diskPersistent="true"
+		   memoryStoreEvictionPolicy="LRU"/>
 </ehcache>
