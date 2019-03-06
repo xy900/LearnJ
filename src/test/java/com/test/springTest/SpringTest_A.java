@@ -1,13 +1,24 @@
 package com.test.springTest;
 
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import com.cms.entity.User;
+import com.cms.service.UserService;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 
 public class SpringTest_A extends SpringTestBase{
-	
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private EhCacheCacheManager ehCacheCacheManager;
 	/**
 	 * 线程池的拒接策略
 	 */
@@ -63,4 +74,63 @@ public class SpringTest_A extends SpringTestBase{
 			+ "-" + executor.getCompletedTaskCount() //已经完成的任务数量
 			+ "-" + executor.getLargestPoolSize());  //线程池中曾经最大的线程数量
 	}
+	
+	
+	/**
+	 * 去除xml配置使用Mapper接口和注解进行查询;
+	 * 结合SpringCache;
+	 */
+	@Test
+	public void userTest() {
+		System.out.println("\n>>>userTest begin");
+		CacheManager singletonCacheManager = CacheManager.create();//创建单例的CacheManager, 没有的话默认寻找名为"__DEFAULT__"的CacheManager.
+		System.out.println(singletonCacheManager);
+		System.out.println(ehCacheCacheManager.getCacheManager());//这里创建的CacheManager不是单例, 但是名为"__DEFAULT__", 所以会被单例模式直接使用.
+		if (singletonCacheManager == ehCacheCacheManager.getCacheManager()) {
+			System.out.println("n>>>同一实例");
+		}
+		//不使用缓存
+		showCache(singletonCacheManager.getCache("com.cms.entity.User"));
+		List<User> list = userService.findByUserName("admin");
+		showList(list);
+		
+		//使用缓存
+		System.out.println("\n>>>Begin findByCache one");
+		showCache(singletonCacheManager.getCache("com.cms.entity.User"));
+		list = userService.findByUserNameByCache("admin");
+		showList(list);
+		
+		System.out.println("\n>>>Begin findByCache one");
+		showCache(singletonCacheManager.getCache("com.cms.entity.User"));
+		list = userService.findByUserNameByCache("admin");
+		showList(list);
+		showCache(singletonCacheManager.getCache("com.cms.entity.User"));
+		System.out.println("\n>>>userTest over");
+	}
+	public void showList(List<User> list) {
+		if (list != null) {
+			System.out.println("\n>>>length:"+list.size());
+			for (User user : list) {
+				System.out.println(">"+user);
+			}
+		}
+	}
+	public void showCache(Cache cache) {
+		if (cache == null) {
+			System.out.println(">>>Not exist cache");
+		} else {
+			System.out.println(">>>Cache is :" + cache);
+			System.out.println(">>>MemorySize is :" + cache.getMemoryStoreSize());
+			List<?> list = cache.getKeys();
+			if (list != null) {
+				System.out.println(">>>Cache size is " + list.size());
+				for (Object ele : list) {
+					System.out.println(ele + ", " + cache.get(ele));
+				}
+				System.out.println();
+			}
+		}
+	}
+	
+	
 }

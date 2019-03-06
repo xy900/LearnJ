@@ -89,7 +89,13 @@ default-lazy-init="true">
       <property name="configLocation" value="classpath:config/mybatis.xml"/>
       <property name="mapperLocations" value="classpath:config/mapper/*.xml"/>
     </bean>
-   
+    <!-- 扫描mapper类 -->
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">  
+        <property name="basePackage" value="com.cms.mapper" />  
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />  
+        <property name="annotationClass" value="org.apache.ibatis.annotations.Mapper"/><!-- 扫描包下所有有Mapper注解的接口,可不要 -->
+    </bean>  
+     
     <!-- 将sqlSessionTemplate手工注入到SqlSessionDaoSupport中    已经通过注解注入-->
     <!-- <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg index="0" ref="sqlSessionFactory"/>
@@ -130,8 +136,10 @@ default-lazy-init="true">
 	<!-- 缓存管理器 Ehcache与spring整合    
 			>>>加上<property name="shared" value="true"/>解决cacheManager重复创建的问题,
 			       因为在mapper中配置了ehcache作为二级缓存时,已经通过CacheManager.create()创建创建一个名为"__DEFAULT__"的CacheManager,
-			       继续创建同名的CacheManager会报错, 加上shared熟悉会引用已经创建的cacheManager,故可以解决该问题
-			>>>或者加上 lazy-init="false",使此缓存管理器的初始化优先于mybatis中的二级缓存,由于mybhttps://www.baidu.com/s?rtt=1&bsst=1&cl=2&tn=news&word=%22cache%3Aannotation-driven%22%20%E7%9A%84%E5%89%8D%E7%BC%80%20%22cache%22%20%E6%9C%AA%E7%BB%91%E5%AE%9Aatis二级缓存创建的CacheManager是单例模式,所有直接用同名(__DEFAULT__)的CacheManager.
+			       继续创建同名的CacheManager会报错, 加上shared属性会引用已经创建的cacheManager,故可以解决该问题
+			>>>或者加上 lazy-init="false",使此缓存管理器的初始化优先于mybatis中的二级缓存,由于mybatis二级缓存创建的CacheManager是单例模式,所有直接用同名(__DEFAULT__)的CacheManager.
+			>>>此处创建的不是单例模式的CacheManager, 但是name为"__DEFAULT__",所以此处创建的和单例模式创建的是统一实例.
+			       因为内部维护了一个<name, CacheManager>的HashMap, 单例模式会查找同名的作为CachaManager.
 	-->
 	<cache:annotation-driven cache-manager="cacheManager"/><!-- 启用缓存注解功能,否则注解不生效,并且要声明在spring主配置文件中 -->
 	<bean id="cacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" lazy-init="false">
@@ -157,4 +165,5 @@ default-lazy-init="true">
 	
 	
 	<import resource="spring-test.xml"/>
+	<import resource="shiro.xml"/>
 </beans>
