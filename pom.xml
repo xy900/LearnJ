@@ -248,6 +248,74 @@
 	    <version>${poi.version}</version>
 	</dependency>
 	
+	<!-- shiro -->
+	<!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-cas -->
+	<dependency>
+	    <groupId>org.apache.shiro</groupId>
+	    <artifactId>shiro-cas</artifactId>
+	    <version>${shiro.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-core -->
+	<dependency>
+	    <groupId>org.apache.shiro</groupId>
+	    <artifactId>shiro-core</artifactId>
+	    <version>${shiro.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-web -->
+	<dependency>
+	    <groupId>org.apache.shiro</groupId>
+	    <artifactId>shiro-web</artifactId>
+	    <version>${shiro.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-ehcache -->
+	<dependency>
+	    <groupId>org.apache.shiro</groupId>
+	    <artifactId>shiro-ehcache</artifactId>
+	    <version>${shiro.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-spring -->
+	<dependency>
+	    <groupId>org.apache.shiro</groupId>
+	    <artifactId>shiro-spring</artifactId>
+	    <version>${shiro.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-lang -->
+	<dependency>
+	    <groupId>org.apache.shiro</groupId>
+	    <artifactId>shiro-lang</artifactId>
+	    <version>${shiro.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-crypto-hash -->
+	<dependency>
+	    <groupId>org.apache.shiro</groupId>
+	    <artifactId>shiro-crypto-hash</artifactId>
+	    <version>${shiro.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-crypto-cipher -->
+	<dependency>
+	    <groupId>org.apache.shiro</groupId>
+	    <artifactId>shiro-crypto-cipher</artifactId>
+	    <version>${shiro.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-config-core -->
+	<dependency>
+	    <groupId>org.apache.shiro</groupId>
+	    <artifactId>shiro-config-core</artifactId>
+	    <version>${shiro.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-config-ogdl -->
+	<dependency>
+	    <groupId>org.apache.shiro</groupId>
+	    <artifactId>shiro-config-ogdl</artifactId>
+	    <version>${shiro.version}</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-event -->
+	<dependency>
+	    <groupId>org.apache.shiro</groupId>
+	    <artifactId>shiro-event</artifactId>
+	    <version>${shiro.version}</version>
+	</dependency>
+	
 	
 	
 
@@ -419,8 +487,6 @@
 		         </connectors>
 		     </configuration>
 		</plugin>
-		
-		
 	</plugins>
   </build>
 </project>
