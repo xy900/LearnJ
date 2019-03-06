@@ -28,7 +28,7 @@ public class ProcessTimeFilter implements Filter{
 		HttpServletRequest req = (HttpServletRequest) request;
 		long beginTime = System.currentTimeMillis();
 //		System.out.println(getClass() + " request url:" + req.getRequestURI() + ", begin at:" + beginTime);
-		Logger.info("request url:{}, begin at:{}", req.getRequestURL(), beginTime);
+		Logger.info("\n    |Begin:   request url:{}, begin at:{}", req.getRequestURL(), beginTime);
 		chain.doFilter(request, response);
 		long endTime = System.currentTimeMillis();
 //		System.out.println(getClass() + " request url:" + req.getRequestURI() + ", end at:" 
