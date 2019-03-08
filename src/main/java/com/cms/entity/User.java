@@ -1,12 +1,14 @@
 package com.cms.entity;
 
 import java.io.Serializable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class User implements Serializable{
 	private static final long serialVersionUID = -4899973939730634971L;
 	
 	private Integer id;
 	private String userName;
+	@JsonIgnore
 	private String passwd;
 	private Integer passCount;
 	private Integer failCount;
