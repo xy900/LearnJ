@@ -5,12 +5,14 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
 import com.cms.entity.User;
 import com.cms.service.UserService;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 
@@ -19,6 +21,8 @@ public class SpringTest_A extends SpringTestBase{
 	private UserService userService;
 	@Autowired
 	private EhCacheCacheManager ehCacheCacheManager;
+	@Autowired
+	private org.apache.shiro.mgt.SecurityManager securityManager;
 	/**
 	 * 线程池的拒接策略
 	 */
@@ -132,5 +136,24 @@ public class SpringTest_A extends SpringTestBase{
 		}
 	}
 	
+	
+	/**
+	 * 测试shiro
+	 */
+	@Test
+	public void testShiro() {
+		SecurityUtils.setSecurityManager(securityManager);//绑定安全管理器
+		Subject subject = SecurityUtils.getSubject();//获取当前subject
+		UsernamePasswordToken token = new UsernamePasswordToken("admin", "111111");
+		try {
+			//登陆
+			subject.login(token);
+			System.out.println("\\n>>>success");
+		} catch (Exception e) {
+			//登陆失败
+			System.out.println("\n>>>error:"+e);
+		}
+		System.out.println("\n>>>isAuthenticated:"+subject.isAuthenticated());
+	}
 	
 }
