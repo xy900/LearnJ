@@ -53,6 +53,16 @@
 	<url-pattern>/*</url-pattern>
   </filter-mapping>
   
+  <!-- shiro -->
+  <filter>
+    <filter-name>shiroFilter</filter-name>
+	<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+  <filter-mapping>
+	<filter-name>shiroFilter</filter-name>
+	<url-pattern>/*</url-pattern>
+  </filter-mapping>
+    
 <!--   <filter>
     <filter-name>ProcessTimeFilter2</filter-name>
     <filter-class>com.filter.ProcessTimeFilter2</filter-class>
@@ -64,7 +74,12 @@
   
   
   
-  	
+  <!--增加对静态资源的处理,当前的设置必须在Spring的Dispatcher的前面-->
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.css</url-pattern>
+    <url-pattern>*.html</url-pattern>
+  </servlet-mapping>
 	
   <servlet>
     <servlet-name>spring-mvc</servlet-name>
@@ -77,7 +92,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>spring-mvc</servlet-name>
-    <url-pattern>*.do</url-pattern>
+    <url-pattern>/</url-pattern>
   </servlet-mapping>
   
 <!--   <servlet>
