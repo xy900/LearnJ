@@ -460,7 +460,7 @@
 			<configuration>
 				<url>http://localhost:9090/manager/html</url>
 				<port>9090</port>
-				<path>xy-cms</path>
+				<path>LearnJ</path>
 				<uriEncoding>UTF-8</uriEncoding>
 				<server>tomcat8</server>
 				<contextReloadable>false</contextReloadable>
@@ -475,10 +475,10 @@
 		     <configuration>
 		    	 <webAppSourceDirectory>src/main/webapp</webAppSourceDirectory>
 				 <scanIntervalSeconds>5</scanIntervalSeconds><!-- 自动扫描时间参数，此处设置为5秒，为0表示 不自动扫描 -->
-				 <!-- <contextPath>/xy-cms</contextPath> -->
+				 <!-- <contextPath>/LearnJ</contextPath> -->
 				 <!-- 若不设置web-app  则直接访问ip:port既可 -->
 		         <webApp>
-		             <contextPath>/xy-cms</contextPath>
+		             <contextPath>/LearnJ</contextPath>
 		         </webApp>
 		         <connectors>
 		             <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
