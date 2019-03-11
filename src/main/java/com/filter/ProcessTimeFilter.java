@@ -1,6 +1,7 @@
 package com.filter;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -28,7 +29,10 @@ public class ProcessTimeFilter implements Filter{
 		HttpServletRequest req = (HttpServletRequest) request;
 		long beginTime = System.currentTimeMillis();
 //		System.out.println(getClass() + " request url:" + req.getRequestURI() + ", begin at:" + beginTime);
-		Logger.info("\n    |Begin:   request url:{}, begin at:{}", req.getRequestURL(), beginTime);
+		String hostName = InetAddress.getLocalHost().getHostName();
+		String hostAddredd = InetAddress.getLocalHost().getHostAddress();
+		Logger.info("\n    |Begin:   request url:{}, begin at:{}, from[{}:{}]", req.getRequestURL(), beginTime,
+					hostName, hostAddredd);
 		chain.doFilter(request, response);
 		long endTime = System.currentTimeMillis();
 //		System.out.println(getClass() + " request url:" + req.getRequestURI() + ", end at:" 
