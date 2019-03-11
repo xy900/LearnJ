@@ -17,7 +17,7 @@ public class OperateAspect {
 	public void doSomething() {}
 	
 	@Around(value = "doSomething()")
-	public void around(ProceedingJoinPoint pjp) throws Throwable {
+	public Object around(ProceedingJoinPoint pjp) throws Throwable {
 		StringBuilder sb = new StringBuilder();
 		Object[] args = pjp.getArgs();//被通知方法参数列表
 		Object target = pjp.getTarget();//目标对象
@@ -32,7 +32,8 @@ public class OperateAspect {
 		log.info((sb.lastIndexOf(",")==sb.length()-1?sb.substring(0, sb.length()-1):sb.toString())+")");
 		
 		Object result = pjp.proceed();//执行方法
-		log.info("End: result[{}]", result);
+		log.info("End: result[{}], from [{}]", result, target.getClass()+"."+signature.getName());
+		return result;
 	}
 
 }
