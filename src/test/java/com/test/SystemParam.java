@@ -8,14 +8,13 @@ import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.poi.ss.formula.ptg.StringPtg;
-
 import com.sun.management.OperatingSystemMXBean;
 import com.test.concurrent.DeadLock;
 
@@ -23,6 +22,7 @@ import com.test.concurrent.DeadLock;
 public class SystemParam {
 	
 	public static void main(String[] args) {
+		//增加死锁线程
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -42,10 +42,26 @@ public class SystemParam {
 			e.printStackTrace();
 		}
 		
+		IPInfo();
 		scanOperate();
 		scanJvmMemory();
 		scanThread();
 		scanDisk();
+	}
+	
+	/**
+	 * 获取本机IP
+	 */
+	public static void IPInfo() {
+		try {
+			System.out.println("\n>>>IP Address");
+			InetAddress address = InetAddress.getLocalHost();
+			System.out.println("hostName:" + address.getHostName());//主机名
+		    System.out.println("主机别名:" + address.getCanonicalHostName());//主机别名
+		    System.out.println("IP:" + address.getHostAddress());//获取IP地址
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
