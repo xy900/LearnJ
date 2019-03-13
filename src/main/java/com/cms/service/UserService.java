@@ -8,4 +8,8 @@ public interface UserService {
 	List<User> findByUserName(String userName);
 	
 	List<User> findByUserNameByCache(String userName);
+	
+	void updateSuccess(String userName);
+	
+	void updateFail(String userName);
 }
