@@ -33,7 +33,13 @@
     <bean id="jedisPool" class="redis.clients.jedis.JedisPool"  scope="singleton">  
         <constructor-arg index="0" value="${redis.host}" />  
         <constructor-arg index="1" value="${redis.port}" type="int"/> 
-    </bean>    
+    </bean>
     
-
+    <!-- spring session相关配置 -->
+    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+    	p:host-name="${redis.host}" p:port="${redis.port}" p:pool-config-ref="jedisPoolConfig"/>
+    <bean id="redisHttpSessionConfiguration" class="org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration">
+    	<property name="maxInactiveIntervalInSeconds" value="1800" /><!-- 30min过期 -->
+    </bean>
+    
 </beans>
