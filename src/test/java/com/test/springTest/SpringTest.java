@@ -11,12 +11,12 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import javax.sql.DataSource;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -358,7 +358,9 @@ public class SpringTest extends SpringTestBase{
 	static Long lockCount1 = 0L;
 	
 	/**
-	 * redis分布式锁
+	 * 分布式锁
+	 * <li>基于数据库的悲观锁实现
+	 * <li>基于redis的setnx操作实现
 	 */
 	@Test
 	public void testRedisLock() {
@@ -428,8 +430,36 @@ public class SpringTest extends SpringTestBase{
 						e.printStackTrace();
 					}*/
 					
+					
+					//2.1.基于redis的分布式锁,已实现(速度较慢待优化)
+					String value = UUID.randomUUID().toString().replaceAll("-", "");
+					long result = 0;
+					do {
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						lockCount++;
+						result = JedisUtils.setStringNx(prefix + 1, value);
+					} while (result == 0);//获取不到锁则一直尝试
+					//成功获取锁
+					JedisUtils.pexpire(prefix + 1, 10*1000);//设置超时时间
+					lockCount1++;
+					TestEntity test1 = test.get("test", 1);
+					HashMap<String, Object> map = new HashMap<>();
+					map.put("id", 1);
+					map.put("count", test1.getCount() - 1);
+					test.updateCount(map);
+					//释放锁
+					if (value.equals(JedisUtils.getString(prefix + 1))) {//检查锁是否被当前线程持有
+						JedisUtils.del(prefix + 1);
+					}
+					
+					
+					
 					//3.使用数据库的排他锁(悲观锁)实现分布式锁
-					Connection connect = null;
+					/*Connection connect = null;
 					while(true) {//获取锁时有可能超时抛异常,一直循环,直到获取锁
 						try {
 							lockCount++;
@@ -462,7 +492,7 @@ public class SpringTest extends SpringTestBase{
 								}
 							}
 						}
-					}
+					}*/
 					
 					enDownLatch.countDown();
 				}

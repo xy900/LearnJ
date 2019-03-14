@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
@@ -194,7 +195,7 @@ public class Test {
 		return jsonObject.toString();
 	}
 	
-	/** 基于redis的分布式锁  未实现
+	/** 基于redis的分布式锁（已实现，速度较慢待优化）
 	 * @return
 	 */
 	@ResponseBody
@@ -231,7 +232,29 @@ public class Test {
 					}
 					System.out.println("\\n>>>开始执行...");
 					
-					try {
+					String value = UUID.randomUUID().toString().replaceAll("-", "");
+					long result = 0;
+					do {
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						result = JedisUtils.setStringNx(prefix + 1, value);
+					} while (result == 0);//获取不到锁则一直尝试
+					//成功获取锁
+					JedisUtils.pexpire(prefix + 1, 10*1000);//设置超时时间
+					TestEntity test1 = testService.get("test", 1);
+					HashMap<String, Object> map = new HashMap<>();
+					map.put("id", 1);
+					map.put("count", test1.getCount() - 1);
+					testService.updateCount(map);
+					//释放锁
+					if (value.equals(JedisUtils.getString(prefix + 1))) {//检查锁是否被当前线程持有
+						JedisUtils.del(prefix + 1);
+					}
+					
+					/*try {
 						Jedis jedis = JedisUtils.getJedis();
 						JedisLock lock = new JedisLock(jedis, prefix + 1, 10000, 30000);
 						lock.acquire();
@@ -249,7 +272,7 @@ public class Test {
 					} catch (Exception e) {
 						System.out.println("\n>>>JedisUtils Exception!");
 						e.printStackTrace();
-					}
+					}*/
 					enDownLatch.countDown();
 				}
 			});
