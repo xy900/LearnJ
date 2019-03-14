@@ -84,7 +84,7 @@ public class JedisUtils
     /** 设置值, 若键存在则不设置
      * @param key
      * @param value
-     * @return 1:设置成功, 2:设置成功
+     * @return 1:设置成功, 0:设置失败
      */
     public static Long setStringNx(String key, String value)
     {
@@ -106,6 +106,32 @@ public class JedisUtils
             }
         }
 		return 0L;
+    }
+    
+    /** 设置超时时间
+     * @param key 键
+     * @param milliseconds 超时时间(毫秒)
+     * @return 1:设置成功   0:设置失败
+     */
+    public static Long pexpire(String key, long milliseconds){
+    	ShardedJedis jedis = null;
+        try
+        {
+            jedis = jedisPool.getResource();
+            Long result = jedis.pexpire(key, milliseconds);
+            logger.info("pexpire[key:{}], {} milliseconds", key, milliseconds);
+            return result;
+        }catch(Exception e) {
+        	logger.error("获取jedis失败.", e);
+        }
+        finally
+        {
+            if (null != jedis)
+            {
+                jedisPool.returnResourceObject(jedis);
+            }
+        }
+        return 0L;
     }
 
     public static String lPop(String key) throws Exception
