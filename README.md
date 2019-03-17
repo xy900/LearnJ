@@ -23,12 +23,13 @@ Jedis | redis的java客户端
 - FactoryBean的使用，用于创建bean。
 - 使用AOP记录日志。
 - 使用shiro实现登录认证的功能。
-- 使用spring session与redis解决集群中session共享问题。
+- 使用spring session与redis解决集群中session共享问题。其中tomcat集群部署，nginx作为负载均衡服务器。
 
 ### java
 - JDK动态代理的实现。
 - 使用数据库悲观锁，实现分布式锁。`select... for update`
 - 使用redis的setnx操作，实现分布式锁。
+- 使用zookeeper实现分布式锁。
 
 ### Ehcache
 - 程序中创建Ehcache实例，进行测试。
