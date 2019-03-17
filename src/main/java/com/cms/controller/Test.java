@@ -33,10 +33,10 @@ import com.cms.component.TestPoint;
 import com.cms.entity.TestEntity;
 import com.cms.service.TestService;
 import com.cms.utils.ApplicationContextHelper;
-import com.cms.utils.JedisLock;
 import com.cms.utils.JedisUtils;
+import com.cms.utils.ZkLock;
+
 import net.sf.json.JSONObject;
-import redis.clients.jedis.Jedis;
 
 @Controller
 @RequestMapping("/test")
@@ -393,6 +393,77 @@ public class Test {
 			System.out.println("try lock:" + count1 + ", success lock:" + count2 + ", error:" + error);
 			count1.set(0);
 			count2.set(0);
+		} catch (InterruptedException e) {
+			System.out.println("\n>>>InterruptedException");
+			e.printStackTrace();
+		}
+		return "相差:" + (test1.getCount() - result.getCount()) + ", 线程数:" + threadCount;
+	}
+	
+	
+	/** 基于zooKeeperLock的分布式锁(在linux服务器上运行可以,本地操作zookeeper会偶尔报错,原因待探究)
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value="/zooKeeperLock.do", produces = "application/json;charset=utf-8")
+	public String zooKeeperLock(HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("\n=======begin========");
+		TestEntity test1 = testService.get("test", 1);
+		TestEntity test2 = testService.get("test", 2);
+		if (test1 == null || test2 == null) {
+			System.out.println("\n>>>为空,不测试");
+			return "not test";
+		}
+		
+		long beginTime = System.currentTimeMillis();
+		
+		int threadCount = 500;//线程个数
+		CyclicBarrier cyclicBarrier = new CyclicBarrier(threadCount);//设置屏障,全部线程到达之后再执行
+		CountDownLatch enDownLatch = new CountDownLatch(threadCount);//统计完成数的计数器
+		
+		System.out.println("\n>>>进行测试");
+		//创建线程池
+		ExecutorService pool = Executors.newCachedThreadPool();//(threadCount);
+		for (int i = 0; i < threadCount; i++) {
+			pool.execute(new Runnable() {
+				@Override
+				public void run() {
+					System.out.println("\\n>>>等待...");
+					try {
+						cyclicBarrier.await();//阻塞线程
+					} catch (InterruptedException | BrokenBarrierException e) {
+						System.out.println("\n>>>error");
+						e.printStackTrace();
+					}
+					System.out.println("\\n>>>开始执行...");
+					
+					ZkLock zkLock = new ZkLock("10.9.216.1:2182");
+					zkLock.lock("test");//加锁
+					try {
+						TestEntity test1 = testService.get("test", 1);
+						HashMap<String, Object> map = new HashMap<>();
+						map.put("id", 1);
+						map.put("count", test1.getCount() - 1);
+						testService.updateCount(map);
+					} finally {
+						zkLock.unlock();//是否锁
+					}
+					
+					enDownLatch.countDown();
+				}
+			});
+		}
+		pool.shutdown();
+		TestEntity result = null;
+		try {
+			enDownLatch.await();//所有线程执行完毕之后再执行
+			long endTime = System.currentTimeMillis();
+			System.out.println("执行结束, 花费时间" + (endTime-beginTime) + "ms");
+			System.out.println("\n>>>end:");
+			System.out.println("\n>>>初始:" + test1);
+			result = testService.get("test", 1);
+			System.out.println("\n>>>结束:" + result);
+			System.out.println("\n>>>相差:" + (test1.getCount() - result.getCount()) + ", 线程数:" + threadCount);
 		} catch (InterruptedException e) {
 			System.out.println("\n>>>InterruptedException");
 			e.printStackTrace();

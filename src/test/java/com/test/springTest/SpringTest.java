@@ -26,18 +26,15 @@ import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
-
 import com.cms.component.TestPoint;
 import com.cms.dao.JdbcDao;
 import com.cms.entity.TestEntity;
 import com.cms.service.TestService;
-import com.cms.utils.JedisLock;
-import com.cms.utils.JedisUtils;
+import com.cms.utils.ZkLock;
 import com.entity.TestEntityClass;
 import com.test.spring.factoryBean.TestEntityClassFactoryBean;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import redis.clients.jedis.Jedis;
 
 public class SpringTest extends SpringTestBase{
 	
@@ -432,7 +429,7 @@ public class SpringTest extends SpringTestBase{
 					
 					
 					//2.1.基于redis的分布式锁,已实现(速度较慢待优化)
-					String value = UUID.randomUUID().toString().replaceAll("-", "");
+					/*String value = UUID.randomUUID().toString().replaceAll("-", "");
 					long result = 0;
 					do {
 						try {
@@ -454,7 +451,7 @@ public class SpringTest extends SpringTestBase{
 					//释放锁
 					if (value.equals(JedisUtils.getString(prefix + 1))) {//检查锁是否被当前线程持有
 						JedisUtils.del(prefix + 1);
-					}
+					}*/
 					
 					
 					
@@ -493,6 +490,22 @@ public class SpringTest extends SpringTestBase{
 							}
 						}
 					}*/
+					
+					
+					//4.基于zookeeper的分布式锁
+					ZkLock zkLock = new ZkLock(null);
+					zkLock.lock("test");//加锁
+					try {
+						TestEntity test1 = test.get("test", 1);
+						HashMap<String, Object> map = new HashMap<>();
+						map.put("id", 1);
+						map.put("count", test1.getCount() - 1);
+						test.updateCount(map);
+					} finally {
+						zkLock.unlock();//是否锁
+					}
+					
+					
 					
 					enDownLatch.countDown();
 				}
